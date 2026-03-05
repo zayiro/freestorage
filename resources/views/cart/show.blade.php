@@ -1,0 +1,209 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Carrito de Compras</h1>
+    
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    @if(count($cart) > 0)
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Presentación</th>
+                    <th>Precio Unit.</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($cart as $id => $item)
+                    <tr id="item_{{ $id }}">
+                        <td class="align-baseline">{{ $item['product_name'] }}</td>
+                        <td class="align-baseline">{{ $item['presentation'] }}</td>
+                        <td class="align-baseline">${{ number_format($item['sales_price'], 2) }}</td>
+                        <td class="align-baseline">
+                            <form action="{{ route('cart.update') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <input type="hidden" name="presentation_id" value="{{ $id }}">
+                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="0" style="width: 70px;">
+                                <button type="submit" class="btn btn-sm btn-info">Actualizar</button>
+                            </form>
+                        </td>
+                        <td class="align-baseline">${{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
+                        <td class="align-baseline">
+                            <button type="submit" class="btn btn-danger btn-sm btn-eliminar" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>                            
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-right">Total:</th>
+                    <th id="cart_total">${{ number_format($total, 2) }}</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="row">
+            <div class="col-md-6 d-flex justify-content-start">
+                <form action="{{ route('cart.clear') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-warning">Vaciar Carrito</button>
+                </form>
+                <a href="{{ route('home') }}" class="btn btn-primary mx-2">Agregar Productos</a>
+            </div>
+            <div class="col-md-6 text-right"></div>
+        </div>
+
+        <!-- Modal de Confirmación para Eliminar -->
+        <div class="modal" id="confirmarEliminarModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Confirmar Eliminación
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de eliminar el item del carrito?</p>
+                    
+                    <div id="infoProducto" class="alert alert-info" style="display: none;">
+                        <span id="nombreProducto"></span>
+                    </div>
+
+                    <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">
+                        Eliminar
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast de notificación -->
+        <div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div id="liveToast" class="toast hide" role="alert">
+                <div class="toast-header">
+                    <strong class="me-auto" id="toastTitulo">Notificación</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body" id="toastMensaje"></div>
+            </div>
+        </div>
+    @else
+        <p class="alert alert-info">El carrito está vacío.</p>
+        <a href="{{ route('home') }}" class="btn btn-primary">Agregar Productos</a>
+    @endif
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    let itemAEliminar = null;
+
+    document.addEventListener('click', function(e) {
+        
+        // Evento: Click en botón eliminar
+        if (e.target.classList.contains('btn-eliminar')) {
+            const boton = e.target;
+            const fila = boton.closest('tr');
+                        
+            // Obtener datos del data attribute
+            const presentationId = boton.getAttribute('data-id');
+            const nombreProducto = boton.getAttribute('data-name');
+
+            itemAEliminar = {
+                presentationId: presentationId,
+            };
+
+            // Mostrar información del producto en el modal
+            document.getElementById('nombreProducto').textContent = nombreProducto;
+            document.getElementById('infoProducto').style.display = 'block';
+
+            // Abrir el modal
+            const modal = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+            modal.show();
+        }
+    });
+
+    document.getElementById('btnConfirmarEliminar').addEventListener('click', async function() {        
+        if (!itemAEliminar) return;
+
+        const btn = this;        
+        
+        try {
+            // Deshabilitar botón y mostrar estado de carga
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const presentationId = itemAEliminar.presentationId;
+            
+            if (!presentationId) {
+                throw new Error('ID de presentación no encontrado');
+            }
+
+            // Enviar petición AJAX
+            const response = await fetch(`/cart/delete/${presentationId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            });
+
+            // Convertir respuesta a JSON
+            const result = await response.json();
+
+            // Cerrar modal de confirmación
+            const modalConfirmacion = bootstrap.Modal.getInstance(document.getElementById('confirmarEliminarModal'));
+            modalConfirmacion.hide();
+
+            if (result.success) {
+                // Eliminar fila de la tabla                               
+                const fila = document.getElementById("item_" + presentationId);
+
+                // Verificamos que existe para evitar errores
+                if (fila) {
+                    fila.remove();
+                }
+
+                // Actualizar info icon menu carrito
+                document.getElementById('cart_count_menu').textContent = result.cart_count;
+                // Actualizar info icon menu total del carrito
+                document.getElementById('cart_menu').title = result.cart_total;
+                                
+                // Actualizar total del carrito
+                document.getElementById('cart_total').textContent = result.cart_total;
+                
+                // Mostrar toast de éxito
+                window.showToast(result.message, 'success');
+            } else {
+                // Mostrar toast de error
+                window.showToast(result.message, 'error');
+            }
+
+        } catch (error) {
+            window.showToast('Error de conexión', 'error');
+        } finally {
+            // Restaurar botón
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-trash"></i> Sí, Eliminar';
+            itemAEliminar = null;
+        }
+    });
+</script>
+@endsection
