@@ -5,10 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
@@ -17,6 +20,23 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasRoles;
+    use LogsActivity;
+
+    protected static function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'roles', 'is_admin'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('users')
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Usuario creado',
+                'updated' => 'Usuario actualizado',
+                'deleted' => 'Usuario eliminado',
+                default => $eventName,
+            });
+    }
 
     /**
      * The attributes that are mass assignable.
