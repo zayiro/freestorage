@@ -4,10 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Presentation extends Model
 {
     use HasFactory;
+    use LogsActivity;
+
+    protected function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('presentations')
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Presentación creada',
+                'updated' => 'Presentación actualizada',
+                'deleted' => 'Presentación eliminada',
+                default => $eventName,
+            });
+    }
 
     protected $fillable = ['product_id', 'presentation', 'purchase_price', 'sales_price', 'unit', 'stock', 'barcode'];
 

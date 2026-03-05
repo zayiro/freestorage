@@ -5,10 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Configuration;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Company extends Model
 {
     use HasFactory;
+    use LogsActivity;
+
+    protected function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('companies')
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Empresa creada',
+                'updated' => 'Empresa actualizada',
+                'deleted' => 'Empresa eliminada',
+                default => $eventName,
+            });
+    }
 
     protected $fillable = ['name', 'address', 'phone', 'email', 'image'];
 

@@ -12,7 +12,7 @@ class Product extends Model
     use HasFactory;
     use LogsActivity;
 
-    protected static function getActivitylogOptions(): LogOptions
+    protected function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly(['name', 'image', 'category_id', 'description', 'brand_id'])

@@ -1,3 +1,4 @@
+<?php
 return [
     'driver' => env('ACTIVITY_LOGGER_DRIVER', 'database'),
     

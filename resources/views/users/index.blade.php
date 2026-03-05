@@ -13,6 +13,8 @@
         @if(auth()->user()->is_admin)
             <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Registrar Nuevo Usuario</a>
         @endif
+
+        <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Actividad de Usuarios</a>
         
         {{-- Tabla de usuarios --}}
         <table class="table table-striped">

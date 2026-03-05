@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,12 @@ Route::middleware([
     Route::get('/dashboard', function () {        
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+        ->name('activity-logs.index');
+    
+    Route::get('/activity-logs/{activity}', [ActivityLogController::class, 'show'])
+        ->name('activity-logs.show');
 });
 
 Route::resource('users', UserController::class);
