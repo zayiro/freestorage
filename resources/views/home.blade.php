@@ -16,7 +16,11 @@
                             @if(isset($search) && $search)
                                 No se encontrarón resultados para "{{ $search }}"
                             @else
-                            <p>No se encontrarón resultados.</p>
+                            <p>
+                                No se encontrarón productos para mostrar. 
+                                {{-- Botón para crear --}}
+                                <a href="{{ route('products.create') }}">Crear su primer producto?</a>
+                            </p>
                             @endif
                         @else
                             {{-- Formulario de búsqueda --}}

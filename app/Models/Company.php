@@ -28,7 +28,7 @@ class Company extends Model
             });
     }
 
-    protected $fillable = ['name', 'address', 'phone', 'email', 'image'];
+    protected $fillable = ['name', 'address', 'phone', 'email', 'image', 'dni'];
 
     // Relación: Una empresa tiene UNA configuración
     public function configuration()
@@ -41,9 +41,9 @@ class Company extends Model
     {
         parent::boot();
 
-        // Se ejecuta ANTES de guardar la empresa en la base de datos
-        static::creating(function ($company) {
-            // Creamos la configuración vacía y la vinculamos
+         // Se ejecuta ANTES de guardar la empresa en la base de datos        
+        static::created(function ($company) {
+            // Ahora el Company ya tiene ID
             $company->configuration()->save(new Configuration());
         });
     }

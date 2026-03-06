@@ -12,11 +12,15 @@
         </div>
     @endif
     <h1>Crear Compañía</h1>
-    <form action="{{ route('companies.store') }}" method="POST">
+    <form action="{{ route('companies.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group mb-3">
             <label for="name">Nombre</label>
             <input type="text" name="name" id="name" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="dni">DNI</label>
+            <input type="text" name="dni" id="dni" class="form-control">
         </div>
         <div class="form-group mb-3">
             <label for="address">Dirección</label>

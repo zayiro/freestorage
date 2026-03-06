@@ -35,14 +35,14 @@
                         <td class="align-middle">
                             <a href="{{ route('products.show', $product) }}" class="btn btn-info btn-sm">Ver</a>
                             <a href="{{ route('products.edit', $product) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{{ route('presentations.create', ['product_id' => $product->id]) }}" class="btn btn-success btn-sm" title="Agregar Presentación">
+                                + Presentación
+                            </a>
                             <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este producto?')">Eliminar</button>
-                            </form>
-                            <a href="{{ route('presentations.create', ['product_id' => $product->id]) }}" class="btn btn-success btn-sm" title="Agregar Presentación">
-                                + Presentación
-                            </a>
+                            </form>                            
                         </td>
                     </tr>
                 @empty

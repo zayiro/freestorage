@@ -38,13 +38,14 @@ class CompanyController extends Controller
             'phone' => 'nullable|string',
             'email' => 'nullable|email',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'dni' => 'nullable|string|max:50',
             'admin_name' => 'required|string|max:255',
             'admin_email' => 'required|email|unique:users,email',            
             'admin_password' => 'required|string|min:8|confirmed',
         ]);
         
         // Crear la compañía
-        $company = Company::create(attributes: $request->only(['name', 'address', 'phone', 'email']));
+        $company = Company::create(attributes: $request->only(['name', 'address', 'phone', 'email', 'dni'])); 
 
         $imagePath = null;
         if ($request->hasFile('image')) {         
@@ -94,6 +95,7 @@ class CompanyController extends Controller
             'phone' => 'nullable|string|max:20',
             'email' => 'required|email|unique:companies,email,' . $company->id,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'dni' => 'nullable|string|max:50',
         ]);
 
         $companyId = auth()->user()->company_id;
@@ -113,6 +115,7 @@ class CompanyController extends Controller
             'phone' => $request->phone,
             'email' => $request->email,
             'image' => $imagePath,
+            'dni' => $request->dni,
         ]);
 
         return redirect()->route('companies.index')->with('success', 'Compañía actualizada exitosamente.');

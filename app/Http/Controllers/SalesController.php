@@ -43,10 +43,11 @@ class SalesController extends Controller
     
     // Crear venta con compañía opcional
     Sale::create([
+        'invoice_number' => Sale::generateInvoiceNumber(),
+        'user_id' => auth()->id(),
         'total_amount' => $total,
         'items' => json_encode($items),
-        'sale_date' => now(),
-        'company_id' => $request->company_id, // Nuevo campo
+        'company_id' => auth()->user()->company_id,
     ]);
     
     session()->forget('cart');

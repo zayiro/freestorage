@@ -20,6 +20,10 @@
             <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $company->name) }}" required>
         </div>
         <div class="form-group mb-3">
+            <label for="dni">DNI</label>
+            <input type="text" name="dni" id="dni" class="form-control" value="{{ old('dni', $company->dni) }}">
+        </div>
+        <div class="form-group mb-3">
             <label for="address">Dirección</label>
             <textarea name="address" id="address" class="form-control">{{ old('address', $company->address) }}</textarea>
         </div>

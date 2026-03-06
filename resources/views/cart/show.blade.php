@@ -17,9 +17,9 @@
                 <tr>
                     <th>Producto</th>
                     <th>Presentación</th>
-                    <th>Precio Unit.</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
+                    <th>Precio</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-end">Subtotal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -29,39 +29,111 @@
                         <td class="align-baseline">{{ $item['product_name'] }}</td>
                         <td class="align-baseline">{{ $item['presentation'] }}</td>
                         <td class="align-baseline">${{ number_format($item['sales_price'], 2) }}</td>
-                        <td class="align-baseline">
-                            <form action="{{ route('cart.update') }}" method="POST" style="display:inline;">
+                        <td class="align-baseline text-center">
+                            <form action="{{ route('cart.update') }}" method="POST" class="d-flex align-items-center">
                                 @csrf
                                 <input type="hidden" name="presentation_id" value="{{ $id }}">
-                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="0" style="width: 70px;">
-                                <button type="submit" class="btn btn-sm btn-info">Actualizar</button>
+                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="0" style="width: 40px;margin-right: 3px;">
+                                <button type="submit" class="btn btn-sm btn-success shadow"><i class="fas fa-edit"></i></button>
                             </form>
                         </td>
-                        <td class="align-baseline">${{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
+                        <td class="align-baseline text-end">${{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
                         <td class="align-baseline">
-                            <button type="submit" class="btn btn-danger btn-sm btn-eliminar" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>                            
+                            <button type="submit" class="btn btn-danger btn-sm btn-eliminar shadow" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>                            
                         </td>
                     </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
+                    <th colspan="4" class="text-right">Subtotal:</th>
+                    <th id="cart_total" class="text-end">${{ number_format($total, 2) }}</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th colspan="4" class="text-right">Descuento (%):</th>
+                    <th class="text-end">
+                        <div class="d-flex justify-content-end">
+                            <input type="text" name="discount" id="discount" class="form-control text-end" value="0" style="width: 80px;">
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th colspan="4" class="text-right">Impuestos (19%):</th>
+                    <th class="text-end">0.00</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th colspan="4" class="text-right">Domicilio:</th>
+                    <th class="text-end">
+                        <div class="d-flex justify-content-end">
+                            <input type="text" name="delivery_fee" id="delivery_fee" class="form-control text-end" value="0" style="width: 80px;">
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+                <tr>
                     <th colspan="4" class="text-right">Total:</th>
-                    <th id="cart_total">${{ number_format($total, 2) }}</th>
+                    <th id="cart_total" class="text-end text-success">${{ number_format($total, 2) }}</th>
                     <th></th>
                 </tr>
             </tfoot>
-        </table>
+        </table>        
 
-        <div class="row">
-            <div class="col-md-6 d-flex justify-content-start">
-                <form action="{{ route('cart.clear') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-warning">Vaciar Carrito</button>
-                </form>
-                <a href="{{ route('home') }}" class="btn btn-primary mx-2">Agregar Productos</a>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información de Pago</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/" method="POST">
+                            @csrf
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Método de Pago</label>
+                                <select name="payment_method" class="form-select" required>
+                                    <option value="cash">Efectivo</option>
+                                    <option value="card">Tarjeta</option>
+                                    <option value="transfer">Transferencia</option>
+                                    <option value="nequi">NEQUI</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Cliente</label>
+                                    <input type="text" name="customer_name" class="form-control" value="Cliente final">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Cliente Id</label>
+                                    <input type="text" name="customer_id" class="form-control" value="1111111111">
+                                </div>                                
+                                <div class="col-md-3">
+                                    <label class="form-label">Telefono</label>
+                                    <input type="text" name="customer_phone" class="form-control" value="3026433874">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Dirección</label>
+                                    <input type="text" name="customer_address" class="form-control" value="No aplica">
+                                </div>
+                            </div>                 
+                            <div class="mt-3 mb-3">
+                                <label class="form-label">Notas</label>
+                                <textarea name="notes" class="form-control" rows="2" style="resize: none;"></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <button type="submit" class="btn btn-success btn-lg shadow">
+                                    <i class="fas fa-check-circle"></i> Realizar Venta
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6 text-right"></div>
         </div>
 
         <!-- Modal de Confirmación para Eliminar -->

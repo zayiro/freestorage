@@ -11,6 +11,7 @@
             @endif
         </p>
         <h1>{{ $company->name }}</h1>
+        <p><strong>DNI:</strong> {{ $company->dni ?? 'N/A' }}</p>
         <p><strong>Correo electrónico:</strong> {{ $company->email }}</p>
         <p><strong>Dirección:</strong> {{ $company->address }}</p>
         <p><strong>Teléfono:</strong> {{ $company->phone }}</p>

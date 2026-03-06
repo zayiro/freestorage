@@ -9,38 +9,9 @@
         <p><strong>Descripción:</strong><br> {{ $product->description ?? 'N/A' }}</p>
         <p><strong>Categoría:</strong><br> {{ $product->category->name ?? 'Sin categoría' }}</p>
         <p><strong>Marca:</strong><br> {{ $product->brand->name ?? 'Sin marca' }}</p>
-        <h3>Presentaciones Disponibles</h3>
-        @if($product->presentations->isNotEmpty())
-            <div class="row">
-                @foreach($product->presentations as $presentation)
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $presentation->presentation }}</h5>
-                                <p class="card-text">
-                                    <strong>Unidad:</strong><br> {{ $presentation->unit ?? 'N/A' }}<br>
-                                    <strong>Precio:</strong><br> ${{ number_format($presentation->purchase_price, 2) }}<br>
-                                    <strong>Stock:</strong><br> {{ $presentation->stock }} unidades
-                                </p>
-                                @if($presentation->stock > 0)
-                                    <form class="add-to-cart-form" data-presentation-id="{{ $presentation->id }}">
-                                        <input type="hidden" name="presentation_id" value="{{ $presentation->id }}">
-                                        <input type="number" name="quantity" value="1" min="1" max="{{ $presentation->stock }}" class="form-control mb-2" required>
-                                        <button type="submit" class="btn btn-primary">Agregar al Carrito</button>
-                                    </form>
-                                @else
-                                    <button class="btn btn-secondary" disabled>Agotado</button>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <p>No hay presentaciones disponibles.</p>
-        @endif
-
+        
         <a href="{{ route('products.index') }}" class="btn btn-primary">Lista de productos</a>
+        <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">Editar</a>
                                
         <!-- Mensajes de Alerta -->
         <div id="alert-container" class="mt-3"></div>

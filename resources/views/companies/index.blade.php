@@ -15,6 +15,7 @@
                 <th>ID</th>
                 <th>Logo</th>
                 <th>Nombre</th>
+                <th>DNI</th>
                 <th>Email</th>
                 <th>Teléfono</th>
                 <th>Acciones</th>
@@ -33,6 +34,7 @@
                         @endif
                     </td>
                     <td class="align-middle">{{ $company->name }}</td>
+                    <td class="align-middle">{{ $company->dni ?? 'N/A' }}</td>
                     <td class="align-middle">{{ $company->email }}</td>
                     <td class="align-middle">{{ $company->phone }}</td>
                     <td class="align-middle">
