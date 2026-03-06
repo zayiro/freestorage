@@ -27,7 +27,7 @@
                     <tr>
                         <td class="align-middle">
                             @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" style="max-width: 50px; max-height: 50px;" alt="Logo {{ $product->name }}">                                
+                                <img src="{{ asset('storage/' . $product->image) }}" style="max-width: 50px; max-height: 50px;" alt="Logo {{ $product->name }}">
                             @endif
                         </td>
                         <td class="align-middle">{{ $product->name }}</td>

@@ -46,8 +46,10 @@
                                     $esLarga = strlen($descripcion) > $limite;
                                 @endphp
                                 <div class="col-md-4">
-                                    <div class="card mb-4 box-shadow">
-                                        <img class="card-img-top img-fluid opacity-100 opacity-hover" src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg" alt="Card image cap">
+                                    <div class="card bg-white mb-4 box-shadow">
+                                        <div class="d-flex justify-content-center align-items-center" style="overflow: hidden;">
+                                            <img src="{{ asset('storage/' . $product->image) }}" class="w-50 h-50 img-fluid d-block mx-auto" alt="{{ $product->name }}" title="{{ $product->name }}">                                        
+                                        </div>
                                         <div class="card-body">
                                             <p class="card-text">
                                                 <div><strong>{{ $product->name }}</strong></div>

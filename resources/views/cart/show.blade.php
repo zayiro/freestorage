@@ -47,14 +47,14 @@
             <tfoot>
                 <tr>
                     <th colspan="4" class="text-right">Subtotal:</th>
-                    <th id="cart_total" class="text-end">${{ number_format($total, 2) }}</th>
+                    <th id="cart_subtotal" class="text-end">${{ number_format($total, 2) }}</th>
                     <th></th>
                 </tr>
                 <tr>
                     <th colspan="4" class="text-right">Descuento (%):</th>
                     <th class="text-end">
                         <div class="d-flex justify-content-end">
-                            <input type="text" name="discount" id="discount" class="form-control text-end" value="0" style="width: 80px;">
+                            <input type="text" name="discount" id="discount" class="form-control text-end" value="0" maxlength="2" style="width: 80px;">
                         </div>
                     </th>
                     <th></th>
@@ -68,7 +68,7 @@
                     <th colspan="4" class="text-right">Domicilio:</th>
                     <th class="text-end">
                         <div class="d-flex justify-content-end">
-                            <input type="text" name="delivery_fee" id="delivery_fee" class="form-control text-end" value="0" style="width: 80px;">
+                            <input type="text" name="delivery_fee" id="delivery_fee" class="form-control text-end" value="0" maxlength="6" style="width: 80px;">
                         </div>
                     </th>
                     <th></th>
@@ -259,6 +259,7 @@
                 document.getElementById('cart_menu').title = result.cart_total;
                                 
                 // Actualizar total del carrito
+                document.getElementById('cart_subtotal').textContent = result.cart_total;
                 document.getElementById('cart_total').textContent = result.cart_total;
                 
                 // Mostrar toast de éxito
