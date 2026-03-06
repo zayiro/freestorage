@@ -31,7 +31,7 @@
                                         class="form-control" 
                                         placeholder="Buscar por nombre, descripción, categoría o marca..." 
                                         value="{{ $search ?? '' }}">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary shadow">
                                         <i class="fas fa-search"></i> Buscar
                                     </button>
                                     @if(isset($search) && $search)
@@ -47,8 +47,8 @@
                                 @endphp
                                 <div class="col-md-4">
                                     <div class="card bg-white mb-4 box-shadow">
-                                        <div class="d-flex justify-content-center align-items-center" style="overflow: hidden;">
-                                            <img src="{{ asset('storage/' . $product->image) }}" class="w-50 h-50 img-fluid d-block mx-auto" alt="{{ $product->name }}" title="{{ $product->name }}">                                        
+                                        <div class="d-flex justify-content-center align-items-center my-2" style="width: 180px; height: 250px; padding: 0; margin: auto;">
+                                            <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid" alt="{{ $product->name }}" title="{{ $product->name }}">                                        
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text">

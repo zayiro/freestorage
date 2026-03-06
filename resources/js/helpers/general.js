@@ -1,5 +1,5 @@
 // Función para formatear precios (Reutilizable)
-export function formatPrice(value, locales = 'es-MX', currency = 'MXN') {
+export function formatPrice(value, locales = 'es-CO', currency = 'COP') {
     return new Intl.NumberFormat(locales, {
         style: 'currency',
         currency: currency,

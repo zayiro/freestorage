@@ -16,7 +16,6 @@
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Presentación</th>
                     <th>Precio</th>
                     <th class="text-center">Cantidad</th>
                     <th class="text-end">Subtotal</th>
@@ -26,56 +25,58 @@
             <tbody>
                 @foreach($cart as $id => $item)
                     <tr id="item_{{ $id }}">
-                        <td class="align-baseline">{{ $item['product_name'] }}</td>
-                        <td class="align-baseline">{{ $item['presentation'] }}</td>
+                        <td class="align-baseline">
+                            <div>{{ $item['product_name'] }}</div>
+                            <div><strong>{{ $item['presentation'] }}</strong></div>
+                        </td>
                         <td class="align-baseline">${{ number_format($item['sales_price'], 2) }}</td>
                         <td class="align-baseline text-center">
                             <form action="{{ route('cart.update') }}" method="POST" class="d-flex align-items-center">
                                 @csrf
                                 <input type="hidden" name="presentation_id" value="{{ $id }}">
-                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="0" style="width: 40px;margin-right: 3px;">
+                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="0" class="form-control" style="width: 60px;margin-right: 3px;">
                                 <button type="submit" class="btn btn-sm btn-success shadow"><i class="fas fa-edit"></i></button>
                             </form>
                         </td>
                         <td class="align-baseline text-end">${{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
                         <td class="align-baseline">
-                            <button type="submit" class="btn btn-danger btn-sm btn-eliminar shadow" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>                            
+                            <button type="submit" class="btn btn-danger btn-sm btn-eliminar shadow" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="4" class="text-right">Subtotal:</th>
-                    <th id="cart_subtotal" class="text-end">${{ number_format($total, 2) }}</th>
-                    <th></th>
+                    <th colspan="3" class="text-right">Subtotal:</th>
+                    <th id="cart_subtotal" class="text-end" data-subtotal="{{ $total }}">${{ number_format($total, 2) }}</th>
+                    <th id="items_discount" class="text-success"></th>
                 </tr>
                 <tr>
-                    <th colspan="4" class="text-right">Descuento (%):</th>
+                    <th colspan="3" class="text-right">Descuento (%):</th>
                     <th class="text-end">
                         <div class="d-flex justify-content-end">
                             <input type="text" name="discount" id="discount" class="form-control text-end" value="0" maxlength="2" style="width: 80px;">
                         </div>
                     </th>
+                    <th><button type="submit" class="btn btn-success btn-sm btn-discount shadow">Aplicar</button></th>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-right">Impuestos (19%):</th>
+                    <th id="tax_amount" class="text-end">0.00</th>
                     <th></th>
                 </tr>
                 <tr>
-                    <th colspan="4" class="text-right">Impuestos (19%):</th>
-                    <th class="text-end">0.00</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th colspan="4" class="text-right">Domicilio:</th>
+                    <th colspan="3" class="text-right">Domicilio:</th>
                     <th class="text-end">
                         <div class="d-flex justify-content-end">
                             <input type="text" name="delivery_fee" id="delivery_fee" class="form-control text-end" value="0" maxlength="6" style="width: 80px;">
                         </div>
                     </th>
-                    <th></th>
+                    <th><button type="submit" class="btn btn-success btn-sm btn-delivery shadow">Aplicar</button></th>
                 </tr>
                 <tr>
-                    <th colspan="4" class="text-right">Total:</th>
-                    <th id="cart_total" class="text-end text-success">${{ number_format($total, 2) }}</th>
+                    <th colspan="3" class="text-right">Total:</th>
+                    <th id="cart_total" class="text-end text-success" data-total="{{ $total }}">${{ number_format($total, 2) }}</th>
                     <th></th>
                 </tr>
             </tfoot>
@@ -112,7 +113,7 @@
                                     <input type="text" name="customer_id" class="form-control" value="1111111111">
                                 </div>                                
                                 <div class="col-md-3">
-                                    <label class="form-label">Telefono</label>
+                                    <label class="form-label">Teléfono</label>
                                     <input type="text" name="customer_phone" class="form-control" value="3026433874">
                                 </div>
                                 <div class="col-md-3">
@@ -185,7 +186,56 @@
 <script>
     let itemAEliminar = null;
 
+    function getDiscount() {
+        let discountInput = document.getElementById('discount');
+        let discountPercentage = parseFloat(discountInput.value) || 0;
+        const subtotal = document.getElementById('cart_subtotal').getAttribute('data-subtotal');
+
+        let discountAmount = subtotal * (discountPercentage / 100);//valor descuento en dinero
+        let taxableAmount = parseFloat(subtotal) - discountAmount;
+
+        return {
+            discountAmount: discountAmount.toFixed(2),
+            taxableAmount: taxableAmount.toFixed(2)
+        };
+    }
+
     document.addEventListener('click', function(e) {
+        // Evento: Click en botón discount
+        if (e.target.classList.contains('btn-discount')) {
+            const discount = getDiscount();
+
+            let deliveryFeeInput = document.getElementById('delivery_fee').value || 0;
+            let deliveryFee = parseFloat(deliveryFeeInput) || 0;
+                        
+            if (discount.discountAmount > 0) {
+                items_discount.textContent = `${window.formatPrice(discount.taxableAmount)}`;                
+            } else {
+                items_discount.textContent = "";
+            }
+
+            //tax 19% sobre el monto después del descuento
+            let taxAmount = discount.taxableAmount * (19 / 100);
+            document.getElementById('tax_amount').textContent = `${window.formatPrice(taxAmount)}`;
+
+            let finalTotal = parseFloat(discount.taxableAmount) + parseFloat(deliveryFee);
+            
+            cart_total.setAttribute('data-total', finalTotal);
+            cart_total.textContent = `${window.formatPrice(finalTotal)}`;
+        }
+
+        // Evento: Click en botón delivery
+        if (e.target.classList.contains('btn-delivery')) {
+            let deliveryFeeInput = document.getElementById('delivery_fee').value || 0;
+            let deliveryFee = parseFloat(deliveryFeeInput) || 0;
+                        
+            const discount = getDiscount();
+
+            let finalTotal = parseFloat(discount.taxableAmount) + parseFloat(deliveryFee);
+
+            cart_total.setAttribute('data-total', finalTotal);
+            cart_total.textContent = `${window.formatPrice(finalTotal)}`;
+        }
         
         // Evento: Click en botón eliminar
         if (e.target.classList.contains('btn-eliminar')) {

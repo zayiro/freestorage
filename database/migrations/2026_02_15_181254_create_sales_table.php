@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('tax', 10, 2)->default(0);
             $table->decimal('delivery_fee', 10, 2)->default(0);
             $table->string('payment_method')->default('cash');    
-            $table->foreignId('company_id')->constrained()->onDelete('cascade'); // Referencia a companies
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('completed');
             $table->text('notes')->nullable();
             $table->timestamps();
