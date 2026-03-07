@@ -84,4 +84,10 @@ class User extends Authenticatable
     public function company() {
         return $this->belongsTo(Company::class);
     }
+
+    // Relación con las ventas del usuario
+    public function ventas()
+    {
+        return $this->hasMany(Sale::class, 'user_id');
+    }
 }

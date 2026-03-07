@@ -11,7 +11,18 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    @if(count($cart) > 0)
+    {{-- Mostrar errores de validación --}}
+    @if($errors->any())
+        <div class="alert alert-danger mt-3">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
+    @if(count($cart) > 0)    
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -23,13 +34,13 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($cart as $id => $item)
+                @foreach($cart as $id => $item)                    
                     <tr id="item_{{ $id }}">
                         <td class="align-baseline">
                             <div>{{ $item['product_name'] }}</div>
                             <div><strong>{{ $item['presentation'] }}</strong></div>
                         </td>
-                        <td class="align-baseline">${{ number_format($item['sales_price'], 2) }}</td>
+                        <td class="align-baseline">$ {{ number_format($item['sales_price'], 2) }}</td>
                         <td class="align-baseline text-center">
                             <form action="{{ route('cart.update') }}" method="POST" class="d-flex align-items-center">
                                 @csrf
@@ -38,7 +49,7 @@
                                 <button type="submit" class="btn btn-sm btn-success shadow"><i class="fas fa-edit"></i></button>
                             </form>
                         </td>
-                        <td class="align-baseline text-end">${{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
+                        <td class="align-baseline text-end">$ {{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
                         <td class="align-baseline">
                             <button type="submit" class="btn btn-danger btn-sm btn-eliminar shadow" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>
                         </td>
@@ -48,35 +59,40 @@
             <tfoot>
                 <tr>
                     <th colspan="3" class="text-right">Subtotal:</th>
-                    <th id="cart_subtotal" class="text-end" data-subtotal="{{ $total }}">${{ number_format($total, 2) }}</th>
+                    <th id="cart_subtotal" class="text-end" data-subtotal="{{ $total }}">$ {{ number_format($total, 2) }}</th>
                     <th id="items_discount" class="text-success"></th>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-right">Descuento (%):</th>
                     <th class="text-end">
                         <div class="d-flex justify-content-end">
-                            <input type="text" name="discount" id="discount" class="form-control text-end" value="0" maxlength="2" style="width: 80px;">
+                            <input type="text" id="discount" class="form-control text-end" value="0" maxlength="2" style="width: 80px;">
                         </div>
                     </th>
                     <th><button type="submit" class="btn btn-success btn-sm btn-discount shadow">Aplicar</button></th>
                 </tr>
+                @php
+                    $taxPercent = 19; // Impuestos fijos del 19%                    
+                    // Calcular IMPUESTOS (19%) sobre (Subtotal - Descuento)
+                    $taxAmount = $total * ($taxPercent / 100);                             
+                @endphp
                 <tr>
                     <th colspan="3" class="text-right">Impuestos (19%):</th>
-                    <th id="tax_amount" class="text-end">0.00</th>
+                    <th id="tax_amount" class="text-end">$ {{ number_format($taxAmount, 2) }}</th>
                     <th></th>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-right">Domicilio:</th>
                     <th class="text-end">
                         <div class="d-flex justify-content-end">
-                            <input type="text" name="delivery_fee" id="delivery_fee" class="form-control text-end" value="0" maxlength="6" style="width: 80px;">
+                            <input type="text" id="delivery_fee" class="form-control text-end" value="0" maxlength="6" style="width: 80px;">
                         </div>
                     </th>
                     <th><button type="submit" class="btn btn-success btn-sm btn-delivery shadow">Aplicar</button></th>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-right">Total:</th>
-                    <th id="cart_total" class="text-end text-success" data-total="{{ $total }}">${{ number_format($total, 2) }}</th>
+                    <th id="cart_total" class="text-end text-success" data-total="{{ $total }}">$ {{ number_format($total, 2) }}</th>
                     <th></th>
                 </tr>
             </tfoot>
@@ -89,9 +105,8 @@
                         <h5 class="mb-0">Información de Pago</h5>
                     </div>
                     <div class="card-body">
-                        <form action="/" method="POST">
-                            @csrf
-                            
+                        <form action="{{ route('sales.checkout') }}" method="POST">
+                            @csrf                            
                             <div class="mb-3">
                                 <label class="form-label">Método de Pago</label>
                                 <select name="payment_method" class="form-select" required>
@@ -114,7 +129,7 @@
                                 </div>                                
                                 <div class="col-md-3">
                                     <label class="form-label">Teléfono</label>
-                                    <input type="text" name="customer_phone" class="form-control" value="3026433874">
+                                    <input type="text" name="customer_phone" class="form-control" value="1111111111">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">Dirección</label>
@@ -131,6 +146,8 @@
                                     <i class="fas fa-check-circle"></i> Realizar Venta
                                 </button>
                             </div>
+                            <input type="hidden" name="discount" id="hidden_discount" value="0">
+                            <input type="hidden" name="delivery_fee" id="hidden_delivery_fee" value="0">
                         </form>
                     </div>
                 </div>
@@ -222,6 +239,8 @@
             
             cart_total.setAttribute('data-total', finalTotal);
             cart_total.textContent = `${window.formatPrice(finalTotal)}`;
+
+            document.getElementById('hidden_discount').value = document.getElementById('discount').value;
         }
 
         // Evento: Click en botón delivery
@@ -235,6 +254,8 @@
 
             cart_total.setAttribute('data-total', finalTotal);
             cart_total.textContent = `${window.formatPrice(finalTotal)}`;
+
+            document.getElementById('hidden_delivery_fee').value = deliveryFeeInput;
         }
         
         // Evento: Click en botón eliminar

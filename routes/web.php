@@ -79,8 +79,9 @@ Route::post('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
 Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
+Route::post('/sales/checkout', [SalesController::class, 'checkout'])->name('sales.checkout');
 Route::get('/sales/{sale}/receipt', [SalesController::class, 'receipt'])->name('sales.receipt');
-Route::get('/sales', [SalesController::class, 'index'])->name('sales.index'); // Opcional
+Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
