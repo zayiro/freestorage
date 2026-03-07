@@ -82,6 +82,7 @@ Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
 Route::post('/sales/checkout', [SalesController::class, 'checkout'])->name('sales.checkout');
 Route::get('/sales/{sale}/receipt', [SalesController::class, 'receipt'])->name('sales.receipt');
 Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+Route::get('/sales/find', [SalesController::class, 'find'])->name('sales.find');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -29,7 +29,7 @@
                     <a href="{{ url('/companies') }}" class="font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Crear compañia</a>
                     @endif
                     @auth
-                        <a href="{{ url('home') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Ecommerce</a>
+                        <a href="{{ url('home') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 underline">Tienda</a>
                     @else
                         <a href="{{ route('login') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Ingresar</a>
 
@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                        <a class="underline text-blue-600 text-lg" href="https://api.whatsapp.com/send?phone=573026433874&amp;text=Hola,%20necesito%20ayuda." target="_blank">¿Necesitas ayuda?</a>
                     </div>
                 </div>
             </div>

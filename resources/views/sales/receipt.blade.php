@@ -1,106 +1,165 @@
 @extends('layouts.app')
 
-@section('content')    
-<div class="container">
+@section('content')
+<style>
+    /* Estilos para impresión */
+    @media print {
+        /* Ocultar elementos que no queremos imprimir */
+        body * {
+            visibility: hidden;
+        }
+        
+        /* Mostrar solo el div específico */
+        #area-imprimir, #area-imprimir * {
+            visibility: visible;
+        }
+        
+        /* Posicionar el div en la parte superior */
+        #area-imprimir {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        
+        /* Ocultar el botón de imprimir */
+        button {
+            display: none;
+        }
+    }
+</style>
+
+<div id="area-imprimir" class="container my-3">
     <!-- Encabezado -->
     <div class="receipt-header">
-        <h4 class="mb-0">FERRETERÍA EL HOMBRE</h4>
-        <p class="mb-0">Av. Principal #123, Ciudad</p>
-        <p class="mb-0">Tel: (555) 123-4567</p>
-        <p class="mb-0">RUC: 1234567890001</p>
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <h4 class="mb-0">{{ $company->name }}</h4>
+                <p class="mb-0">Dirección: {{ $company->address }}</p>
+                <p class="mb-0">Teléfono: {{ $company->phone }}</p>
+                <p class="mb-0">NIT: {{ $company->dni }}</p>
+            </div>
+            <div class="col-md-7">
+                @if($company->image)
+                    <!-- img-thumbnail es una clase de Bootstrap que crea un borde redondeado -->
+                    <img src="{{ asset('storage/' . $company->image) }}" style="max-width: 50px; max-height: 50px;" alt="Logo {{ $company->name }}">
+                @else
+                    <span class="text-muted">Sin imagen</span>
+                @endif
+            </div>
+        </div>        
     </div>
 
     <!-- Información de la Venta -->
     <div class="mb-3">
-        <table class="table table-sm">
-            <tr>
-                <th width="40%">Factura:</th>
-                <td><strong>{{ $sale->invoice_number }}</strong></td>
-            </tr>
-            <tr>
-                <th>Fecha:</th>
-                <td>{{ $sale->created_at->format('d/m/Y H:i') }}</td>
-            </tr>
-            <tr>
-                <th>Vendedor:</th>
-                <td>{{ $sale->user ? $sale->user->name : 'Sistema' }}</td>
-            </tr>
-            <tr>
-                <th>Cliente:</th>
-                <td>{{ $sale->customer_name ?? 'Público General' }}</td>
-            </tr>
-            <tr>
-                <th>Cédula:</th>
-                <td>{{ $sale->customer_cedula ?? '-' }}</td>
-            </tr>
-            <tr>
-                <th>Método de Pago:</th>
-                <td>{{ ucfirst($sale->payment_method) }}</td>
-            </tr>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <th width="40%">Factura:</th>
+                    <td><strong>{{ $sale->invoice_number }}</strong></td>
+                </tr>
+                <tr>
+                    <th>Fecha:</th>
+                    <td>{{ $sale->created_at->format('d/m/Y H:i') }}</td>
+                </tr>
+                <tr>
+                    <th>Vendedor:</th>
+                    <td>{{ $sale->user ? $sale->user->name : 'Sistema' }}</td>
+                </tr>
+                <tr>
+                    <th>Cliente:</th>
+                    <td>{{ $sale->customer_name ?? 'Público General' }}</td>
+                </tr>
+                <tr>
+                    <th>Cédula:</th>
+                    <td>{{ $sale->customer_id ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Método de Pago:</th>
+                    <td>{{ ucfirst($sale->payment_method) }}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <!-- Productos -->
-    <table class="receipt-table">
-        <thead>
-            <tr>
-                <th>Cantidad</th>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($items as $item)
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ $item['quantity'] }}</td>
-                    <td>{{ $item['product_name'] }}</td>
-                    <td>${{ number_format($item['sales_price'], 2) }}</td>
-                    <td>${{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
+                    <th>Cantidad</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Total</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @php
+                    $subtotal = 0;
+                @endphp
 
-    <!-- Totales -->
-    <div class="total-section">
-        <table class="table table-sm">
+                @foreach($items as $item)
+                    @php
+                    $subtotal += $item['sales_price'] * $item['quantity'];
+                    @endphp
+                    <tr>
+                        <td>{{ $item['quantity'] }}</td>
+                        <td>{{ $item['product_name'] }}</td>
+                        <td>$ {{ number_format($item['sales_price'], 2) }}</td>
+                        <td>$ {{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totales -->    
+    <div class="table-responsive">
+        <table class="table">
             <tr>
                 <td>Subtotal:</td>
-                <td>${{ number_format($sale->subtotal, 2) }}</td>
+                <td>$ {{ number_format($subtotal, 2) }}</td>
             </tr>
             @if($sale->discount > 0)
-                <tr class="text-danger">
+                <tr>
                     <td>Descuento ({{ $sale->discount_percentage }}%):</td>
-                    <td>-${{ number_format($sale->discount, 2) }}</td>
+                    <td>$ {{ number_format($sale->discount, 2) }}</td>
                 </tr>
             @endif
             @if($sale->tax > 0)
-                <tr class="text-success">
-                    <td>Impuestos ({{ $sale->tax_percentage }}%):</td>
-                    <td>+${{ number_format($sale->tax, 2) }}</td>
+                <tr>
+                    <td>Impuestos:</td>
+                    <td>$ {{ number_format($sale->tax, 2) }}</td>
                 </tr>
             @endif
-            <tr class="final-total">
+            @if($sale->discount > 0)
+            <tr>
+                <td>Domicilio:</td>
+                <td>$ {{ number_format($sale->delivery_fee, 2) }}</td>
+            </tr>
+            @endif
+            <tr>
                 <td><strong>TOTAL:</strong></td>
-                <td><strong>${{ number_format($sale->total, 2) }}</strong></td>
+                <td><strong>$ {{ number_format($sale->total_price, 2) }}</strong></td>
             </tr>
         </table>
     </div>
 
     <!-- Notas -->
     @if($sale->notes)
-        <div class="mt-3">
+        <div class="mt-3 mb-3">
             <strong>Notas:</strong>
             <p class="mb-0">{{ $sale->notes }}</p>
         </div>
-    @endif
+    @endif    
+</div>
 
+<div class="container mb-3">
     <!-- Pie de página -->
-    <div class="receipt-footer">
+    <div class="no-print receipt-footer">
         <p class="mb-0"><strong>¡Gracias por su compra!</strong></p>
         <p class="mb-0">Conservar este recibo para garantías</p>
-        <p class="mb-0">www.ferreteria-ejemplo.com</p>
+        <p class="mb-0">{{ $company->email }}</p>
     </div>
 </div>
 

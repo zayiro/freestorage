@@ -65,7 +65,7 @@
                                                         {{ $descripcion }}
                                                     @endif
                                                 </div>
-                                                <div><strong>{{ $product->brand->name ?? 'Sin marca' }}</strong></div>                                           
+                                                <div>{{ $product->brand->name ?? 'Sin marca' }}</div>                                           
                                             </p>
                                             <div class="d-flex justify-content-between align-items-center"> 
                                                 @if($product->presentations->isNotEmpty())                                           

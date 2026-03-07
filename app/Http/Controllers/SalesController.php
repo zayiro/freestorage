@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Sale;
 use App\Models\Presentation;
-use App\Models\SaleItem;
-use App\Models\Product;
+use App\Models\Company;
 
 class SalesController extends Controller
 {
@@ -61,8 +60,10 @@ class SalesController extends Controller
     // Mostrar recibo de venta
     public function receipt(Sale $sale)
     {
-        $items = json_decode($sale->items, true);
-        return view('sales.receipt', compact('sale', 'items'));
+        $items = json_decode($sale->items, true);        
+        $company = Company::findOrFail($sale->company_id);
+        
+        return view('sales.receipt', compact('sale', 'items', 'company'));
     }
     
     // Listar ventas (opcional, para admin)
@@ -176,5 +177,30 @@ class SalesController extends Controller
             return redirect()->route('cart.show')
                 ->with('error', 'Error al realizar la venta: ' . $e->getMessage());
         }
+    }
+
+    public function find(Request $request)
+    {
+        $request->validate([
+            'invoice_number' => 'required|string|max:50',
+        ]);
+
+        $invoice_number = $request->invoice_number;
+
+        if (!$invoice_number) {
+            return back()->with('error', 'Por favor ingresa un número de factura');
+        }
+
+        // Buscar la factura
+        $sale = Sale::where('invoice_number', $invoice_number)->first();
+
+        if (!$sale) {
+            return back()->with('error', 'Factura no encontrada');
+        }
+
+        $items = json_decode($sale->items, true);        
+        $company = Company::findOrFail($sale->company_id);
+        
+        return view('sales.receipt', compact('sale', 'items', 'company'));        
     }
 }
