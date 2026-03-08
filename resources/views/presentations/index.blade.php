@@ -8,7 +8,7 @@
     <form method="GET" action="{{ route('presentations.index') }}" class="mb-3">
         <div class="row">
             <div class="col-md-3">
-                <select name="producto_id" class="form-control">
+                <select name="product_id" class="form-control">
                     <option value="">Todos los Productos</option>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
@@ -43,30 +43,33 @@
                 <th>Producto</th>
                 <th>Presentación</th>
                 <th>Unidad</th>
-                <th>Cantidad</th>
-                <th>Precio Venta</th>
                 <th>Stock</th>
+                <th>Precio Venta</th>
+                <th>Inventario</th>
                 <th>Mín. Stock</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @forelse($presentations as $presentation)
-                <tr class="{{ $presentation->inventario && $presentation->inventario->cantidad_actual <= $presentation->inventario->cantidad_minima ? 'table-warning' : '' }}">
-                    <td>{{ $presentation->product->name }}</td>
-                    <td>{{ $presentation->presentation }}</td>
-                    <td>{{ $presentation->unit }}</td>
-                    <td>{{ $presentation->stock }}</td>
-                    <td>${{ number_format($presentation->sales_price, 2) }}</td>
-                    <td>
-                        <span class="badge {{ $presentation->inventario && $presentation->inventario->cantidad_actual > 0 ? 'badge-success' : 'badge-danger' }}">
-                            {{ $presentation->inventario->cantidad_actual ?? 0 }}
+                <tr class="{{ $presentation->inventory && $presentation->inventory->current_quantity <= $presentation->inventory->minimun_quantity ? 'table-warning' : '' }}">
+                    <td class="align-baseline">{{ $presentation->product->id }}</td>
+                    <td class="align-baseline">{{ $presentation->product->name }}</td>
+                    <td class="align-baseline">{{ $presentation->presentation }}</td>
+                    <td class="align-baseline">{{ $presentation->unit }}</td>
+                    <td class="align-baseline">{{ $presentation->stock }}</td>
+                    <td class="align-baseline">$ {{ number_format($presentation->sales_price, 2) }}</td>
+                    <td class="align-baseline">
+                        <span class="badge {{ $presentation->inventory && $presentation->inventory->current_quantity > 0 ? 'bg-success' : 'bg-danger' }}">
+                            {{ $presentation->inventory->current_quantity ?? 0 }}
                         </span>
                     </td>
-                    <td>{{ $presentation->inventario->cantidad_minima ?? 0 }}</td>
-                    <td>
-                        <a href="{{ route('presentations.edit', $presentation->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{{ route('products.show', $presentation->product->id) }}" class="btn btn-info btn-sm">Ver Producto</a>
+                    <td class="align-baseline">{{ $presentation->inventory->minimum_quantity ?? 0 }}</td>
+                    <td class="align-baseline">
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('presentations.edit', $presentation->id) }}" class="btn btn-warning btn-sm shadow"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="{{ route('products.show', $presentation->product->id) }}" class="btn btn-info btn-sm shadow" target="_blank"><i class="fa-brands fa-product-hunt"></i></a>
+                        </div>
                     </td>
                 </tr>
             @empty

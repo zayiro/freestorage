@@ -154,24 +154,26 @@ class SalesController extends Controller
                 'notes' => $validated['notes'],                
             ]);
 
-            /*
-            $product = Product::find($item['id']);
-            if ($product) {
-                $product->decrement('stock', $item['quantity']);
-            }*/
+            // 11. Decrementar stock
+            foreach ($cart as $item) {                
+                $presentation = Presentation::find($item['presentation_id']);
+                if ($presentation) {
+                    $presentation->decrement('stock', $item['quantity']);
+                }
+            }
 
-            // 13. Confirmar transacción
+            // 12. Confirmar transacción
             DB::commit();
 
-            // 14. Limpiar carrito de compras
+            // 13. Limpiar carrito de compras
             session()->forget('cart');
 
-            // 15. Redirigir con mensaje de éxito
+            // 14. Redirigir con mensaje de éxito
             return redirect()->route('sales.receipt', ['sale' => $sale])
                 ->with('success', 'Venta realizada con éxito. Factura: ' . $sale->invoice_number);
 
         } catch (\Exception $e) {
-            // 16. Si hay error, revertir transacción
+            // 15. Si hay error, revertir transacción
             DB::rollBack();
 
             return redirect()->route('cart.show')

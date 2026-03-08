@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('unit')->nullable(); // Ej. "pieza"
             $table->integer('stock');
             $table->string('barcode')->unique()->nullable();
+            $table->unsignedTinyInteger('active')->default(1);
             $table->timestamps();
         });
     }

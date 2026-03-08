@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 
@@ -30,19 +31,19 @@ class ActivityLogController extends Controller
 
         // Cargar relación user y paginar
         $activities = $query
-            ->with('user')
+            ->with('causer')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         // Obtener usuarios para el filtro
-        $users = \App\Models\User::all();
+        $users = User::all();
 
         return view('activity-logs.index', compact('activities', 'users'));
     }
 
     public function show(Activity $activity)
     {
-        $activity->load('user', 'subject');
+        $activity->load('causer', 'subject');
         return view('activity-logs.show', compact('activity'));
     }
 }

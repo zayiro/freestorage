@@ -18,7 +18,8 @@ class PresentationController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request) {
-        $query = Presentation::with(['product', 'stock']);
+        //dd($request->all());
+        $query = Presentation::with(['product', 'inventory']);
 
         // Filtrar por producto si se proporciona
         if ($request->has('product_id') && $request->product_id) {
@@ -31,15 +32,17 @@ class PresentationController extends Controller
                 $q->where('category_id', $request->category_id);
             });
         }
-/*
-        // Filtrar por stock bajo
-        if ($request->has('stock_bajo') && $request->stock_bajo) {
-            $query->whereHas('inventario', function ($q) {
-                $q->whereRaw('cantidad_actual <= cantidad_minima');
-            });
-        }*/
 
-        $presentations = $query->orderBy('created_at', 'desc')->paginate(15);
+        // Filtrar por stock bajo
+        if ($request->has('minimun_quantity') && $request->minimun_quantity) {
+            $query->whereHas('inventory', function ($q) {
+                $q->whereRaw('current_quantity <= minimun_quantity');
+            });
+        }
+
+        $presentations = $query->orderBy('product_id', 'asc')
+                                ->paginate(15);
+
         $products = Product::all();
 
         return view('presentations.index', compact('presentations', 'products'));
@@ -81,6 +84,7 @@ class PresentationController extends Controller
             'unit' => $request->unit,
             'stock' => $request->current_quantity,
             'barcode' => $request->barcode,
+            'active' => $request->active,
         ]);
 
         
@@ -111,9 +115,10 @@ class PresentationController extends Controller
      */
     public function edit(Presentation $presentation)
     {
-        if ($presentation->company_id !== auth()->user()->company_id) {
+        /*if ($presentation->company_id !== auth()->user()->company_id) {
             abort(403);
-        }
+        }*/
+
         return view('presentations.edit', compact('presentation'));
     }
 

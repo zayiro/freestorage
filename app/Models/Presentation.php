@@ -15,7 +15,7 @@ class Presentation extends Model
     protected function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'description'])
+            ->logOnly(['product_id', 'presentation', 'purchase_price', 'sales_price', 'unit', 'stock', 'barcode', 'active'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('presentations')
@@ -27,7 +27,7 @@ class Presentation extends Model
             });
     }
 
-    protected $fillable = ['product_id', 'presentation', 'purchase_price', 'sales_price', 'unit', 'stock', 'barcode'];
+    protected $fillable = ['product_id', 'presentation', 'purchase_price', 'sales_price', 'unit', 'stock', 'barcode', 'active'];
 
     public function company()
     {

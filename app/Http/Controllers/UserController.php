@@ -65,6 +65,13 @@ class UserController extends Controller
         }
 
         $user->delete();
+
+        // Registrar actividad antes de eliminar
+        auth()->user()->logActivity('Eliminó al usuario ' . $user->name, [
+            'usuario_eliminado' => $user->name,
+            'email' => $user->email,
+        ]);
+
         return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
     }
 }

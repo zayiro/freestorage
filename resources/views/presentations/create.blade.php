@@ -39,18 +39,18 @@
         <div class="form-group mb-3">
             <label for="unit">Unidad de Medida</label>
             <select name="unit" id="unit" class="form-control" required>
-                <option value="unidad" {{ old('unidad_medida') == 'unidad' ? 'selected' : '' }}>Unidad</option>
-                <option value="pieza" {{ old('unidad_medida') == 'pieza' ? 'selected' : '' }}>Pieza</option>
-                <option value="kg" {{ old('unidad_medida') == 'kg' ? 'selected' : '' }}>Kilogramo</option>
-                <option value="g" {{ old('unidad_medida') == 'g' ? 'selected' : '' }}>Gramo</option>
-                <option value="litro" {{ old('unidad_medida') == 'litro' ? 'selected' : '' }}>Litro</option>
-                <option value="ml" {{ old('unidad_medida') == 'ml' ? 'selected' : '' }}>Mililitro</option>
-                <option value="metro" {{ old('unidad_medida') == 'metro' ? 'selected' : '' }}>Metro</option>
-                <option value="cm" {{ old('unidad_medida') == 'cm' ? 'selected' : '' }}>Centímetro</option>
-                <option value="caja" {{ old('unidad_medida') == 'caja' ? 'selected' : '' }}>Caja</option>
-                <option value="paquete" {{ old('unidad_medida') == 'paquete' ? 'selected' : '' }}>Paquete</option>
-                <option value="bolsa" {{ old('unidad_medida') == 'bolsa' ? 'selected' : '' }}>Bolsa</option>
-                <option value="bulto" {{ old('unidad_medida') == 'bulto' ? 'selected' : '' }}>Bulto</option>
+                <option value="unidad" {{ old('unit') == 'unidad' ? 'selected' : '' }}>Unidad</option>
+                <option value="pieza" {{ old('unit') == 'pieza' ? 'selected' : '' }}>Pieza</option>
+                <option value="kg" {{ old('unit') == 'kg' ? 'selected' : '' }}>Kilogramo</option>
+                <option value="g" {{ old('unit') == 'g' ? 'selected' : '' }}>Gramo</option>
+                <option value="litro" {{ old('unit') == 'litro' ? 'selected' : '' }}>Litro</option>
+                <option value="ml" {{ old('unit') == 'ml' ? 'selected' : '' }}>Mililitro</option>
+                <option value="metro" {{ old('unit') == 'metro' ? 'selected' : '' }}>Metro</option>
+                <option value="cm" {{ old('unit') == 'cm' ? 'selected' : '' }}>Centímetro</option>
+                <option value="caja" {{ old('unit') == 'caja' ? 'selected' : '' }}>Caja</option>
+                <option value="paquete" {{ old('unit') == 'paquete' ? 'selected' : '' }}>Paquete</option>
+                <option value="bolsa" {{ old('unit') == 'bolsa' ? 'selected' : '' }}>Bolsa</option>
+                <option value="bulto" {{ old('unit') == 'bulto' ? 'selected' : '' }}>Bulto</option>
             </select>
         </div>
 
