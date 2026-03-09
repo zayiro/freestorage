@@ -18,8 +18,7 @@ return new class extends Migration
             $table->decimal('purchase_price', 10, 2);// Precio de compra
             $table->decimal('sales_price', 10, 2);// Precio de venta
             $table->string('unit')->nullable(); // Ej. "pieza"
-            $table->integer('stock');
-            $table->string('barcode')->unique()->nullable();
+            $table->integer('stock');            
             $table->unsignedTinyInteger('active')->default(1);
             $table->timestamps();
         });

@@ -47,6 +47,7 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validación: imagen, tipos permitidos, max 2MB
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id', // Valida que exista en la tabla categories
+            'barcode' => 'nullable|unique:products',
             'brand_id' => 'nullable|exists:brands,id', // Valida que exista en la tabla brands
         ]);
 
@@ -61,7 +62,7 @@ class ProductController extends Controller
             'image' => $imagePath,
             'description' => $request->description,
             'category_id' => $request->category_id,
-            
+            'barcode' => $request->barcode,
             'company_id' => auth()->user()->company_id, // Asigna automáticamente
         ]);        
 
@@ -109,6 +110,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255', 
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',           
             'category_id' => 'nullable|exists:categories,id',
+            'barcode' => 'nullable|unique:products',
             'brand_id' => 'nullable|exists:brands,id',
             'description' => 'nullable|string',            
         ]);
@@ -128,6 +130,7 @@ class ProductController extends Controller
             'image' => $imagePath,
             'description' => $request->description,
             'category_id' => $request->category_id,
+            'barcode' => $request->barcode,
             'brand_id' => $request->brand_id,
         ]);
         
@@ -190,7 +193,6 @@ class ProductController extends Controller
                 'presentation_name' => $presentation->presentation,
                 'stock' => $presentation->stock,
                 'price' => $presentation->sales_price,
-                'barcode' => $presentation->barcode,
                 'unit' => $presentation->unit,
             ];
         });

@@ -70,8 +70,7 @@ class PresentationController extends Controller
             'purchase_price' => 'required|numeric|min:0',
             'sales_price' => 'required|numeric|min:0',
             'unit' => 'required|string|max:50',
-            'current_quantity' => 'required|integer|min:1',
-            'barcode' => 'nullable|unique:presentations',
+            'current_quantity' => 'required|integer|min:1',            
             'minimum_quantity' => 'nullable|integer|min:0',
             'location' => 'nullable|string|max:100',
         ]);
@@ -82,8 +81,7 @@ class PresentationController extends Controller
             'purchase_price' => $request->purchase_price,
             'sales_price' => $request->sales_price,
             'unit' => $request->unit,
-            'stock' => $request->current_quantity,
-            'barcode' => $request->barcode,
+            'stock' => $request->current_quantity,            
             'active' => $request->active,
         ]);
 

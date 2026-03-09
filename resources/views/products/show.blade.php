@@ -9,6 +9,7 @@
         <p><strong>Descripción:</strong><br> {{ $product->description ?? 'N/A' }}</p>
         <p><strong>Categoría:</strong><br> {{ $product->category->name ?? 'Sin categoría' }}</p>
         <p><strong>Marca:</strong><br> {{ $product->brand->name ?? 'Sin marca' }}</p>
+        <p><strong>Barcode:</strong><br> {{ $product->barcode ?? 'Sin barcode' }}</p>
         
         <a href="{{ route('products.index') }}" class="btn btn-primary">Lista de productos</a>
         <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">Editar</a>

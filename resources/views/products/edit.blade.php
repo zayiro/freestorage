@@ -59,6 +59,13 @@
                 <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
+        <div class="form-group mb-3">
+            <label for="barcode">Código de Barras (Opcional)</label>
+            <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode', $product->barcode) }}">
+            @error('barcode')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
         <button type="submit" class="btn btn-primary">Actualizar</button>
         <a href="{{ route('products.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -27,7 +29,7 @@ class Product extends Model
             });
     }
 
-    protected $fillable = ['name', 'image', 'category_id', 'description', 'company_id', 'brand_id'];
+    protected $fillable = ['name', 'image', 'category_id', 'barcode', 'description', 'company_id', 'brand_id'];
     
     public function company()
     {
@@ -58,5 +60,26 @@ class Product extends Model
     public function getTotalStockAttribute()
     {
         return $this->inventories->sum('quantity');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            if (empty($product->barcode)) {
+                $product->barcode = self::generateBarcode();
+                
+                // Generar imagen
+                $generator = new BarcodeGeneratorPNG();
+                $image = $generator->getBarcode($product->barcode, 'CODE128');
+                
+                // Guardar imagen
+                $filename = "products/{$product->company_id}/{$product->barcode}.png";
+                Storage::disk('public')->put($filename, $image);
+                
+                $product->barcode_image = $filename;
+            }
+        });
     }
 }

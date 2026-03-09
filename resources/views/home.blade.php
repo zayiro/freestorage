@@ -46,7 +46,7 @@
                                     $esLarga = strlen($descripcion) > $limite;
                                 @endphp
                                 <div class="col-md-4">
-                                    <div class="card bg-white mb-4 box-shadow">
+                                    <div class="card bg-white mb-4 shadow">
                                         <div class="d-flex justify-content-center align-items-center my-2" style="width: 180px; height: 250px; padding: 0; margin: auto;">
                                             <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid" alt="{{ $product->name }}" title="{{ $product->name }}">                                        
                                         </div>

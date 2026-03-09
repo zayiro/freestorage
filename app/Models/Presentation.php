@@ -27,7 +27,7 @@ class Presentation extends Model
             });
     }
 
-    protected $fillable = ['product_id', 'presentation', 'purchase_price', 'sales_price', 'unit', 'stock', 'barcode', 'active'];
+    protected $fillable = ['product_id', 'presentation', 'purchase_price', 'sales_price', 'unit', 'stock', 'active'];
 
     public function company()
     {

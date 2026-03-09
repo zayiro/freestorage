@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');          
             $table->string('image')->nullable();
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null'); // Referencia a categories, nullable
+            $table->string('barcode')->unique()->nullable();
             $table->text('description')->nullable();            
             $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
             $table->timestamps();

@@ -68,13 +68,7 @@
                     <input type="number" step="0.01" name="sales_price" id="sales_price" class="form-control" value="{{ old('sales_price') }}" required>
                 </div>
             </div>
-        </div>
-
-        <!-- Código de Barras -->
-        <div class="form-group mb-3">
-            <label for="barcode">Código de Barras (Opcional)</label>
-            <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode') }}">
-        </div>
+        </div>        
 
         <!-- Inventario Inicial -->
         <div class="row mb-3">

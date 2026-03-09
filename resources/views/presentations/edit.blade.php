@@ -102,16 +102,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Código de Barras -->
-                            <div class="form-group mb-3">
-                                <label for="barcode">Código de Barras (Opcional)</label>
-                                <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode', $presentation->barcode) }}">
-                                @error('barcode')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            </div>                            
 
                             <!-- Inventario Inicial -->
                             <div class="row mb-3">
