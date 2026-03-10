@@ -59,6 +59,13 @@
                 <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
+        @if($product->barcode)
+            <div class="form-group mb-3">
+                <label>Código de Barras Actual</label>
+                <img src="{{ Storage::url($product->barcode) }}" alt="Código de Barras" style="max-width: 300px;">
+            </div>
+        @endif
+
         <button type="submit" class="btn btn-primary">Actualizar</button>
         <a href="{{ route('products.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>

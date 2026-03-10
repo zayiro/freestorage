@@ -62,8 +62,10 @@ class SalesController extends Controller
     {
         $items = json_decode($sale->items, true);        
         $company = Company::findOrFail($sale->company_id);
+
+        $total_items = collect($items)->sum('quantity');
         
-        return view('sales.receipt', compact('sale', 'items', 'company'));
+        return view('sales.receipt', compact('sale', 'items', 'total_items', 'company'));
     }
     
     // Listar ventas (opcional, para admin)
@@ -122,7 +124,7 @@ class SalesController extends Controller
             $deliveryFee = $validated['delivery_fee'] ?? 0;
 
             // 8. Calcular TOTAL FINAL
-            $finalTotal = $taxableAmount + $taxAmount + $deliveryFee;
+            $finalTotal = $taxableAmount + $deliveryFee;
 
             // 9. Verificar stock disponible
             foreach ($cart as $item) {

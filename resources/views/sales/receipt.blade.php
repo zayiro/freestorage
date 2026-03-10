@@ -67,16 +67,20 @@
                     <td>{{ $sale->user ? $sale->user->name : 'Sistema' }}</td>
                 </tr>
                 <tr>
-                    <th>Cliente:</th>
+                    <th>Razón Social:</th>
                     <td>{{ $sale->customer_name ?? 'Público General' }}</td>
                 </tr>
                 <tr>
-                    <th>Cédula:</th>
+                    <th>NIT:</th>
                     <td>{{ $sale->customer_id ?? '-' }}</td>
                 </tr>
                 <tr>
                     <th>Método de Pago:</th>
                     <td>{{ ucfirst($sale->payment_method) }}</td>
+                </tr>
+                <tr>
+                    <th>Artículos:</th>
+                    <td>{{ $total_items }}</td>
                 </tr>
             </table>
         </div>
@@ -87,10 +91,11 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Cantidad</th>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Total</th>
+                    <th>ID</th>                    
+                    <th>ARTÍCULO</th>
+                    <th>CANTIDAD</th>
+                    <th>VALOR UNITARIO</th>
+                    <th>VALOR TOTAL</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,8 +108,9 @@
                     $subtotal += $item['sales_price'] * $item['quantity'];
                     @endphp
                     <tr>
-                        <td>{{ $item['quantity'] }}</td>
+                        <td>{{ $item['product_id'] }}</td>                        
                         <td>{{ $item['product_name'] }}</td>
+                        <td>{{ $item['quantity'] }}</td>
                         <td>$ {{ number_format($item['sales_price'], 2) }}</td>
                         <td>$ {{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
                     </tr>
@@ -117,8 +123,8 @@
     <div class="table-responsive">
         <table class="table">
             <tr>
-                <td>Subtotal:</td>
-                <td>$ {{ number_format($subtotal, 2) }}</td>
+                <td>Venta grabada:</td>
+                <td>$ {{ number_format($subtotal - $sale->tax, 2) }}</td>
             </tr>
             @if($sale->discount > 0)
                 <tr>
@@ -132,7 +138,7 @@
                     <td>$ {{ number_format($sale->tax, 2) }}</td>
                 </tr>
             @endif
-            @if($sale->discount > 0)
+            @if($sale->delivery_fee > 0)
             <tr>
                 <td>Domicilio:</td>
                 <td>$ {{ number_format($sale->delivery_fee, 2) }}</td>

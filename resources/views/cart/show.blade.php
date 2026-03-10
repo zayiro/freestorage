@@ -121,19 +121,19 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <label class="form-label">Cliente</label>
-                                    <input type="text" name="customer_name" class="form-control" value="Cliente final">
+                                    <input type="text" name="customer_name" class="form-control" value="CONSUMIDOR FINAL">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">Cliente Id</label>
-                                    <input type="text" name="customer_id" class="form-control" value="1111111111">
+                                    <input type="text" name="customer_id" class="form-control" value="2222222222">
                                 </div>                                
                                 <div class="col-md-3">
                                     <label class="form-label">Teléfono</label>
-                                    <input type="text" name="customer_phone" class="form-control" value="1111111111">
+                                    <input type="text" name="customer_phone" class="form-control" value="320">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">Dirección</label>
-                                    <input type="text" name="customer_address" class="form-control" value="No aplica">
+                                    <input type="text" name="customer_address" class="form-control" value="CALLE">
                                 </div>
                             </div>                 
                             <div class="mt-3 mb-3">

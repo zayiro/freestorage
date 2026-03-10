@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductController extends Controller
 {
@@ -129,6 +130,14 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
         ]);
+
+        if (empty($product->barcode)) {
+            //validar si quedo bien con las funciones privadas al final comparar
+            //con el modelo de product
+            $barcode = $this->generateUniqueBarcode($product->company_id);
+            $product->update(['barcode' => $barcode]);
+            
+        }
         
         return redirect()->route('products.index')->with('success', 'Producto actualizado.');
     }
@@ -196,5 +205,43 @@ class ProductController extends Controller
         return response()->json([            
             'presentations' => $presentations,
         ]);
+    }
+
+    /**
+     * Generar código de barras único para la empresa
+     */
+    private function generateUniqueBarcode($companyId)
+    {
+        // Obtener el último producto de la empresa
+        $lastProduct = Product::where('company_id', $companyId)
+            ->orderBy('id', 'desc')
+            ->first();
+        
+        // Extraer número del último código (ej: COMP-00001 -> 1)
+        $nextNumber = $lastProduct ? (int)substr($lastProduct->barcode, 5) + 1 : 1;
+        
+        // Formatear con ceros a la izquierda
+        return 'COMP-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Generar y guardar imagen del código de barras
+     */
+    private function saveBarcodeImage($barcode, $companyId)
+    {
+        $generator = new BarcodeGeneratorPNG();
+        $image = $generator->getBarcode($barcode, 'CODE128');
+        
+        // Crear carpeta de la compañía si no existe
+        $directory = "products/{$companyId}";
+        if (!Storage::disk('public')->exists($directory)) {
+            Storage::disk('public')->makeDirectory($directory);
+        }
+
+        // Guardar imagen
+        $filename = "products/{$companyId}/{$barcode}.png";
+        Storage::disk('public')->put($filename, $image);
+
+        return $filename;
     }
 }

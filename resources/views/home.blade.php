@@ -69,7 +69,7 @@
                                             </p>
                                             <div class="d-flex justify-content-between align-items-center"> 
                                                 @if($product->presentations->isNotEmpty())                                           
-                                                    <button type="button" class="btn btn-success btn-lg w-100 presentationsModal"
+                                                    <button type="button" class="btn btn-success btn-lg w-100 shadow presentationsModal"
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#presentationsModal"
                                                         data-id="{{ $product->id }}"
@@ -77,7 +77,7 @@
                                                         Agregar presentación
                                                     </button>
                                                 @else
-                                                    <button type="button" class="btn btn-secondary btn-lg w-100" disabled>
+                                                    <button type="button" class="btn btn-secondary btn-lg w-100 shadow" disabled>
                                                         Sin presentaciones disponibles
                                                     </button>
                                                 @endif
