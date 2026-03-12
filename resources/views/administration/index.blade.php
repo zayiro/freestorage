@@ -12,6 +12,7 @@
             <a class="list-group-item list-group-item-action" href="{{ route('activity-logs.index') }}">Actividad</a>
             <a class="list-group-item list-group-item-action" href="{{ route('companies.show', $companyId) }}">Compañia</a>
             <a class="list-group-item list-group-item-action" href="{{ route('sales.index') }}">Ventas</a>
+            <a class="list-group-item list-group-item-action" href="{{ route('cashier.index') }}">Caja</a>
         </div>
     </div>
 @endsection

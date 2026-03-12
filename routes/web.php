@@ -11,6 +11,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\CashierController;
+use App\Http\Controllers\SaleItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +85,28 @@ Route::post('/sales/checkout', [SalesController::class, 'checkout'])->name('sale
 Route::get('/sales/{sale}/receipt', [SalesController::class, 'receipt'])->name('sales.receipt');
 Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
 Route::get('/sales/find', [SalesController::class, 'find'])->name('sales.find');
+
+// Rutas de ítems de venta
+Route::prefix('sale-items')->name('sale-items.')->group(function () {
+    Route::get('/sale/{saleId}', [SaleItemController::class, 'getBySale'])
+        ->name('get-by-sale');
+    Route::post('/', [SaleItemController::class, 'store'])
+        ->name('store');
+    Route::put('/{id}', [SaleItemController::class, 'update'])
+        ->name('update');
+    Route::delete('/{id}', [SaleItemController::class, 'destroy'])
+        ->name('destroy');
+    Route::get('/statistics', [SaleItemController::class, 'getStatistics'])
+        ->name('statistics');
+});
+
+Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
+Route::get('/cashier/dashboard', [CashierController::class, 'dashboard'])->name('cashier.dashboard');
+Route::post('/process', [CashierController::class, 'processSale'])->name('cashier.process');
+Route::get('/cashier/history', [CashierController::class, 'history'])->name('cashier.history');
+Route::get('/cashier/receipt/{id}', [CashierController::class, 'receipt'])->name('cashier.receipt');
+Route::post('/cashier/close', [CashierController::class, 'closeCashier'])->name('cashier.close');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

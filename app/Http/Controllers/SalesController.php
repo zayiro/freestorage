@@ -4,65 +4,89 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\CashMovement;
+use App\Services\CashierService;
 use App\Models\Sale;
+use App\Models\Product;
+use App\Models\SaleItem;
 use App\Models\Presentation;
 use App\Models\Company;
 
 class SalesController extends Controller
 {
+    protected $cashierService;
+
+    public function __construct(CashierService $cashierService)
+    {
+        $this->cashierService = $cashierService;
+    }
+
     // Método para procesar la venta desde el carrito
     public function store(Request $request)
-{
-    $request->validate([
-        'company_id' => 'nullable|exists:companies,id', // Validar compañía opcional
-    ]);
-    
-    $cart = session()->get('cart', []);
-    
-    if (empty($cart)) {
-        return redirect()->back()->with('error', 'El carrito está vacío.');
-    }
-    
-    $total = 0;
-    $items = [];
-    
-    // Verificar stock y calcular total (igual que antes)
-    foreach ($cart as $item) {
-        $presentation = Presentation::find($item['id']);
-        if (!$presentation || $presentation->stock_quantity < $item['quantity']) {
-            return redirect()->back()->with('error', 'Stock insuficiente para ' . $item['presentation']);
+    {
+        $request->validate([
+            'company_id' => 'nullable|exists:companies,id', // Validar compañía opcional
+        ]);
+        
+        $cart = session()->get('cart', []);
+        
+        if (empty($cart)) {
+            return redirect()->back()->with('error', 'El carrito está vacío.');
         }
-        $total += $item['price'] * $item['quantity'];
-        $items[] = $item;
+        
+        $total = 0;
+        $items = [];
+        $total_items = 0;
+        
+        // Verificar stock y calcular total (igual que antes)
+        foreach ($cart as $item) {
+            $presentation = Presentation::find($item['id']);
+            if (!$presentation || $presentation->stock_quantity < $item['quantity']) {
+                return redirect()->back()->with('error', 'Stock insuficiente para ' . $item['presentation']);
+            }
+
+            $total += $item['price'] * $item['quantity'];
+            $items[] = $item;
+            $total_items += $item['quantity'];
+        }
+        
+        // Reducir stock (igual que antes)
+        foreach ($cart as $item) {
+            $presentation = Presentation::find($item['id']);
+            $presentation->stock_quantity -= $item['quantity'];
+            $presentation->save();
+        }
+        
+        // Crear venta con compañía opcional
+        $sale = Sale::create([
+            'invoice_number' => Sale::generateInvoiceNumber(),
+            'user_id' => auth()->id(),
+            'total_price' => $total,
+            'total_items' => $total_items,
+            'company_id' => auth()->user()->company_id,
+        ]);
+
+        foreach ($cart as $item) {
+            SaleItem::create([
+                'sale_id' => $sale->id,
+                'product_id' => $item['product_id'],
+                'product_name' => $item['product_name'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+                'subtotal' => $item['subtotal'],
+            ]);
+        }
+
+        session()->forget('cart');
+        
+        return redirect()->route('sales.receipt', ['sale' => Sale::latest()->first()])->with('success', 'Venta procesada exitosamente.');
     }
-    
-    // Reducir stock (igual que antes)
-    foreach ($cart as $item) {
-        $presentation = Presentation::find($item['id']);
-        $presentation->stock_quantity -= $item['quantity'];
-        $presentation->save();
-    }
-    
-    // Crear venta con compañía opcional
-    Sale::create([
-        'invoice_number' => Sale::generateInvoiceNumber(),
-        'user_id' => auth()->id(),
-        'total_amount' => $total,
-        'items' => json_encode($items),
-        'company_id' => auth()->user()->company_id,
-    ]);
-    
-    session()->forget('cart');
-    
-    return redirect()->route('sales.receipt', ['sale' => Sale::latest()->first()])->with('success', 'Venta procesada exitosamente.');
-}
     
     // Mostrar recibo de venta
     public function receipt(Sale $sale)
     {
-        $items = json_decode($sale->items, true);        
+        $items = SaleItem::where('sale_id', $sale->id)->get();
         $company = Company::findOrFail($sale->company_id);
-
         $total_items = collect($items)->sum('quantity');
         
         return view('sales.receipt', compact('sale', 'items', 'total_items', 'company'));
@@ -104,8 +128,11 @@ class SalesController extends Controller
 
             // 5. Calcular SUBTOTAL (suma de productos)
             $subtotal = 0;
+            $totalItems = 0;
+
             foreach ($cart as $item) {
                 $subtotal += $item['sales_price'] * $item['quantity'];
+                $totalItems += $item['quantity'];
             }
 
             // 6. Calcular DESCUENTO sobre SUBTOTAL
@@ -140,12 +167,12 @@ class SalesController extends Controller
             $sale = Sale::create([
                 'invoice_number' => Sale::generateInvoiceNumber(),
                 'user_id' => auth()->id(),
-                'items' => json_encode($cart),
                 'customer_name' => $validated['customer_name'],                
                 'customer_phone' => $validated['customer_phone'],
                 'customer_id' => $validated['customer_id'],
                 'customer_address' => $validated['customer_address'],                
                 'total_price' => $finalTotal,
+                'total_items' => $totalItems,
                 'discount' => $discountAmount,
                 'discount_percentage' => $discountPercent,
                 'tax' => $taxAmount,
@@ -155,6 +182,17 @@ class SalesController extends Controller
                 'status' => 'completed',
                 'notes' => $validated['notes'],                
             ]);
+
+            foreach ($cart as $item) {
+                SaleItem::create([
+                    'sale_id' => $sale->id,
+                    'product_id' => $item['product_id'],
+                    'product_name' => $item['product_name'],
+                    'quantity' => $item['quantity'],
+                    'sales_price' => $item['sales_price'],
+                    'subtotal' => $item['sales_price'] * $item['quantity'],
+                ]);
+            }
 
             // 11. Decrementar stock
             foreach ($cart as $item) {                

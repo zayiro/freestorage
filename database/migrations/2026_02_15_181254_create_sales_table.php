@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('customer_id')->nullable();
             $table->string('customer_address')->nullable();
             $table->decimal('total_price', 10, 2);
+            $table->integer('total_items')->default(0);
             $table->decimal('discount', 10, 2)->default(0);
             $table->decimal('discount_percentage', 10, 2)->default(0);
             $table->decimal('tax', 10, 2)->default(0);

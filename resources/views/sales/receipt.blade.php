@@ -32,6 +32,18 @@
 <div id="area-imprimir" class="container my-3">
     <!-- Encabezado -->
     <div class="receipt-header">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="row mb-3">
             <div class="col-md-5">
                 <h4 class="mb-0">{{ $company->name }}</h4>
