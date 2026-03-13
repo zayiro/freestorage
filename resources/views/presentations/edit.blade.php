@@ -5,6 +5,15 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Editar Presentación</h1>
+        @if($errors->any())
+            <div class="alert alert-danger mt-3">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <a href="{{ route('presentations.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver
         </a>

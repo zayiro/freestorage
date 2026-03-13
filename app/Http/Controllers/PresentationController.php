@@ -132,15 +132,14 @@ class PresentationController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'presentation' => 'required|string|max:255',
             'unit' => 'required|string|max:50',
             'active' => 'boolean',
             'purchase_price' => 'required|numeric|min:0',
             'sales_price' => 'required|numeric|min:0',            
             'current_quantity' => 'required|integer|min:1',            
             'minimum_quantity' => 'nullable|integer|min:0',
-            'location' => 'nullable|string|max:255',
-            
+            'location' => 'nullable|string|max:255'            
         ]);
 
         $presentation->update($request->all());
