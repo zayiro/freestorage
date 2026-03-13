@@ -57,6 +57,7 @@ Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('
 
 Route::resource('products', ProductController::class);
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product}/show', [ProductController::class, 'showProduct'])->name('products.showproduct');
 Route::get('/productos/{product}/presentaciones/create', [PresentationController::class, 'create'])->name('presentaciones.create');
 Route::post('/productos/{product}/presentaciones', [PresentationController::class, 'store'])->name('presentaciones.store');
 

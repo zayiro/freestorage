@@ -30,7 +30,7 @@
                 </div>
                 
                 <div class="mt-4 text-muted small">
-                    <p>¿Necesitas acceso? <a href="mailto:soporte@tuempresa.com">Contacta al soporte</a></p>
+                    <p>¿Necesitas acceso? <a href="mailto:ocampotecnologo@gmail.com">Contacta al soporte</a></p>
                 </div>
 
             </div>

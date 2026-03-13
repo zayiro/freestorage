@@ -106,6 +106,19 @@ class ProductController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function showProduct(Product $product)
+    {
+        // Verificar que el producto pertenezca a la compañía del usuario
+        if ($product->company_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        return view('products.showProduct', compact('product'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Product $product)

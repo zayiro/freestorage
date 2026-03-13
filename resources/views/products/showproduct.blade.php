@@ -1,107 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
-    <style>
-        .descripcion-toggle:checked ~ .descripcion-corta { display: none; }
-        .descripcion-toggle:checked ~ .ver-mas { display: none; }
-        .descripcion-toggle:not(:checked) ~ .descripcion-completa { display: none; }
-        .descripcion-toggle:not(:checked) ~ .ver-menos { display: none; }
-    </style>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12 my-4">
-                @if(auth()->check())
-                    <div class="row">
-                        @if ($products->isEmpty())                        
-                            @if(isset($search) && $search)
-                                No se encontrarón resultados para "{{ $search }}"
-                            @else
-                            <p>
-                                No se encontrarón productos para mostrar. 
-                                {{-- Botón para crear --}}
-                                <a href="{{ route('products.create') }}">Crear su primer producto?</a>
-                            </p>
-                            @endif
-                        @else
-                            {{-- Formulario de búsqueda --}}
-                            <form action="{{ route('home') }}" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input type="text" 
-                                        name="search" 
-                                        class="form-control" 
-                                        placeholder="Buscar por nombre, descripción, categoría o marca..." 
-                                        value="{{ $search ?? '' }}">
-                                    <button type="submit" class="btn btn-primary shadow">
-                                        <i class="fas fa-search"></i> Buscar
-                                    </button>
-                                    @if(isset($search) && $search)
-                                        <a href="{{ route('home') }}" class="btn btn-secondary">Limpiar</a>
-                                    @endif
-                                </div>
-                            </form>
-                            @foreach ($products as $product)
-                                @php
-                                    $descripcion = $product->description ?? 'Descripción: N/A';
-                                    $limite = 30;
-                                    $esLarga = strlen($descripcion) > $limite;
-                                @endphp
-                                <div class="col-md-4">
-                                    <div class="card bg-white mb-4 shadow">
-                                        <div class="d-flex justify-content-center align-items-center my-2" style="width: 180px; height: 250px; padding: 0; margin: auto;">
-                                            <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid" alt="{{ $product->name }}" title="{{ $product->name }}">                                        
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="card-text">
-                                                <div style="min-height: 46px"><strong>{{ $product->name }}</strong></div>
-                                                <div>{{ $product->category->name ?? 'Categoría: N/A' }}</div>
-                                                <div id="descripcion-container">
-                                                    @if($esLarga)
-                                                        <input type="checkbox" id="toggle_{{ $product->id }}" class="descripcion-toggle d-none">
-                                                        <span class="descripcion-corta">{{ \Illuminate\Support\Str::limit($descripcion, $limite, '...') }}</span>
-                                                        <label for="toggle_{{ $product->id }}" class="ver-mas" style="color: blue; cursor: pointer;">Ver más</label>
-                                                        <span class="descripcion-completa">{{ $descripcion }}</span>
-                                                        <label for="toggle_{{ $product->id }}" class="ver-menos" style="color: blue; cursor: pointer;">Ver menos</label>
-                                                    @else
-                                                        {{ $descripcion }}
-                                                    @endif
-                                                </div>
-                                                <div>{{ $product->brand->name ?? 'Marca: N/A' }}</div>                                           
-                                            </p>
-                                            <div class="d-flex justify-content-between align-items-center gap-2"> 
-                                                @if($product->presentations->isNotEmpty())                                           
-                                                    <button type="button" class="btn btn-success btn-lg w-100 shadow presentationsModal"
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#presentationsModal"
-                                                        data-id="{{ $product->id }}"
-                                                    >
-                                                        <i class="fa-solid fa-cart-shopping"></i> presentaciones
-                                                    </button>
-                                                @else
-                                                    <button type="button" class="btn btn-secondary btn-lg w-100 shadow" disabled>
-                                                        Sin presentaciones
-                                                    </button>
-                                                @endif
-                                                <div>
-                                                   <a href="{{ route('products.showproduct', $product) }}">
-                                                        <button type="button" class="btn btn-success btn-lg w-100 shadow"                                                        
-                                                            data-id="{{ $product->id }}"
-                                                        >
-                                                            <i class="fa-solid fa-magnifying-glass"></i>
-                                                        </button>
-                                                    </a> 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endif
-                    </div>
-                @else
-                    <p>No tienes permisos para acceder a estas opciones.</p>
-                @endif
+    <div class="container mt-5">
+        @if($product->image)
+            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="img-fluid mb-4" style="max-height: 300px;">
+        @endif
+        <h1>{{ $product->name }}</h1>
+        <p><strong>Descripción:</strong><br> {{ $product->description ?? 'N/A' }}</p>
+        <p><strong>Categoría:</strong><br> {{ $product->category->name ?? 'Sin categoría' }}</p>
+        <p><strong>Marca:</strong><br> {{ $product->brand->name ?? 'Sin marca' }}</p>
+        <p>
+            @if ($product->barcode)
+                <div><img src="{{ asset('storage/' . $product->barcode_image) }}" alt="{{ $product->barcode }}" class="img-fluid img-thumbnail" style="width: 300px;"></div>
+                <div class="small">{{ $product->barcode }}</div>
+            @else
+                <div>Sin barcode</div>
+            @endif
+        </p>
+
+        <div class="d-flex justify-content-between align-items-center gap-2"> 
+            @if($product->presentations->isNotEmpty())                                           
+                <button type="button" class="btn btn-success btn-lg w-100 shadow presentationsModal"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#presentationsModal"
+                    data-id="{{ $product->id }}"
+                >
+                    <i class="fa-solid fa-cart-shopping"></i> presentaciones
+                </button>
+            @else
+                <button type="button" class="btn btn-secondary btn-lg w-100 shadow" disabled>
+                    Sin presentación
+                </button>
+            @endif
+            <div>
+                <a href="{{ route('home') }}" class="btn btn-primary btn-lg shadow">Tienda</a> 
             </div>
-        </div>
+        </div>                                       
     </div>
 
     {{-- Modal único para todas las presentaciones --}}
@@ -152,8 +86,9 @@
                 <div class="toast-body" id="toastMensaje"></div>
             </div>
         </div>
-    </div>    
+    </div>
 @endsection
+
 @section('scripts')
 <script>    
     // Función para cargar presentaciones
@@ -162,8 +97,7 @@
         resetPresentationsModal();
         showPresentationsLoader();
 
-        let productos = @json($products);
-        const producto = productos.find(p => p.id == productId);
+        const producto = @json($product);
         
         if (producto) {
             fillPresentationsModal(producto);
@@ -345,4 +279,3 @@
         });
     });
 </script>
-@endsection

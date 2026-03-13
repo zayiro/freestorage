@@ -36,12 +36,12 @@
             <tbody>
                 @foreach($cart as $id => $item)                    
                     <tr id="item_{{ $id }}">
-                        <td class="align-baseline">
+                        <td class="align-middle">
                             <div>{{ $item['product_name'] }}</div>
                             <div><strong>{{ $item['presentation'] }}</strong></div>
                         </td>
-                        <td class="align-baseline">$ {{ number_format($item['sales_price'], 2) }}</td>
-                        <td class="align-baseline text-center">
+                        <td class="align-middle">$ {{ number_format($item['sales_price'], 2) }}</td>
+                        <td class="align-middle text-center">
                             <form action="{{ route('cart.update') }}" method="POST" class="d-flex align-items-center">
                                 @csrf
                                 <input type="hidden" name="presentation_id" value="{{ $id }}">
@@ -49,8 +49,8 @@
                                 <button type="submit" class="btn btn-sm btn-success shadow"><i class="fas fa-edit"></i></button>
                             </form>
                         </td>
-                        <td class="align-baseline text-end">$ {{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
-                        <td class="align-baseline">
+                        <td class="align-middle text-end">$ {{ number_format($item['sales_price'] * $item['quantity'], 2) }}</td>
+                        <td class="align-middle">
                             <button type="submit" class="btn btn-danger btn-sm btn-eliminar shadow" data-id="{{ $id }}" data-name="{{ $item["product_name"] }}">Eliminar</button>
                         </td>
                     </tr>
@@ -112,7 +112,7 @@
                                 <select name="payment_method" class="form-select" required>
                                     <option value="cash">Efectivo</option>
                                     <option value="card">Tarjeta</option>
-                                    <option value="transfer">Transferencia</option>
+                                    <option value="bancolombia">Bancolombia</option>
                                     <option value="nequi">NEQUI</option>
                                     <option value="other">Otro</option>
                                 </select>

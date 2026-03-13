@@ -82,7 +82,7 @@ class PresentationController extends Controller
             'sales_price' => $request->sales_price,
             'unit' => $request->unit,
             'stock' => $request->current_quantity,            
-            'active' => $request->active,
+            'active' => true,
         ]);
 
         
@@ -125,13 +125,22 @@ class PresentationController extends Controller
      */
     public function update(Request $request, Presentation $presentation)
     {
-        if ($presentation->company_id !== auth()->user()->company_id) {
+        $productFind = Product::where('company_id', auth()->user()->company_id)->find($presentation->product_id);
+
+        if (!$productFind) {
             abort(403);
         }
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'unit' => 'required|string|max:50',
+            'active' => 'boolean',
+            'purchase_price' => 'required|numeric|min:0',
+            'sales_price' => 'required|numeric|min:0',            
+            'current_quantity' => 'required|integer|min:1',            
+            'minimum_quantity' => 'nullable|integer|min:0',
+            'location' => 'nullable|string|max:255',
+            
         ]);
 
         $presentation->update($request->all());
