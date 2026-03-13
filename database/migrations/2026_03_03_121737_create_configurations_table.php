@@ -20,6 +20,11 @@ return new class extends Migration
             $table->string('currency')->default('COP');
             $table->string('timezone')->default('UTC');
             $table->boolean('notifications_enabled')->default(true);
+            $table->integer('quantity_users')->default(5);
+            $table->integer('quantity_products')->default(500);
+            $table->integer('quantity_sales')->default(1000);
+            $table->boolean('is_active')->default(true);
+            $table->string('plan')->default('free');
             $table->json('settings')->nullable(); // Para configuraciones dinámicas
             
             $table->timestamps();

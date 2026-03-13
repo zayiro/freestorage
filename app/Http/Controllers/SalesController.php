@@ -184,10 +184,13 @@ class SalesController extends Controller
             ]);
 
             foreach ($cart as $item) {
+                $presentation = Presentation::find($item['presentation_id']);
+                $productName = $item['product_name'] .' '. $presentation->presentation;
+
                 SaleItem::create([
                     'sale_id' => $sale->id,
                     'product_id' => $item['product_id'],
-                    'product_name' => $item['product_name'],
+                    'product_name' => $productName,
                     'quantity' => $item['quantity'],
                     'sales_price' => $item['sales_price'],
                     'subtotal' => $item['sales_price'] * $item['quantity'],

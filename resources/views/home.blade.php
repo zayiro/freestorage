@@ -52,7 +52,7 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text">
-                                                <div><strong>{{ $product->name }}</strong></div>
+                                                <div style="min-height: 46px"><strong>{{ $product->name }}</strong></div>
                                                 <div>{{ $product->category->name ?? 'Sin categoría' }}</div>
                                                 <div id="descripcion-container">
                                                     @if($esLarga)

@@ -9,6 +9,7 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     
+    @if(auth()->check() && auth()->user()->is_admin && $user->id !== auth()->id())
     <table class="table table-striped">
         <thead>
             <tr>
@@ -53,10 +54,11 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">No hay compañías registradas.</td>
+                    <td colspan="7">No hay compañías registradas.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
+    @endif
 </div>
 @endsection

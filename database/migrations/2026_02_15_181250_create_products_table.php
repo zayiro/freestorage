@@ -16,9 +16,13 @@ return new class extends Migration
             $table->string('name');          
             $table->string('image')->nullable();
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null'); // Referencia a categories, nullable
+            $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null'); // Referencia a brands, opcional
+            $table->string('sku')->nullable();            
             $table->string('barcode')->unique()->nullable();
+            $table->text('barcode_image')->nullable();
             $table->text('description')->nullable();            
             $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

@@ -13,6 +13,20 @@
                 </ul>
             </div>
         @endif
+        <!-- Información de Límite -->
+        @if($limitCheck['success'])
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i>
+                <strong>Estado:</strong> Puedes crear {{ $limitCheck['remaining'] }} producto(s) más.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @else
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Limitación:</strong> {{ $limitCheck['message'] }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
         <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="form-group mb-3">

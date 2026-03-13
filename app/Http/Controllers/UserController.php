@@ -49,6 +49,7 @@ class UserController extends Controller
         if ($user->company_id !== auth()->user()->company_id) {
             abort(403, 'No tienes permiso para ver este usuario.');
         }
+        
         return view('users.show', compact('user'));
     }
     

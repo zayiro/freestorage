@@ -61,8 +61,8 @@
         </div>
         @if($product->barcode)
             <div class="form-group mb-3">
-                <label>Código de Barras Actual</label>
-                <img src="{{ Storage::url($product->barcode) }}" alt="Código de Barras" style="max-width: 300px;">
+                <div><img src="{{ asset('storage/' . $product->barcode_image) }}" alt="{{ $product->barcode }}" class="img-fluid img-thumbnail" style="width: 300px;"></div>
+                <div class="small">{{ $product->barcode }}</div>
             </div>
         @endif
 

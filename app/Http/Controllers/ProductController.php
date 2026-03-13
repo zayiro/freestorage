@@ -8,13 +8,17 @@ use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\BarcodeGeneratorSVG;
+use App\Services\ProductLimitService;
 
 class ProductController extends Controller
 {
-    public function __construct()
+    protected $productLimitService;
+
+    public function __construct(ProductLimitService $productLimitService)
     {
-        $this->middleware('auth'); // Solo usuarios logueados
+        $this->middleware('auth');
+        $this->productLimitService = $productLimitService;
     }
 
     /**
@@ -24,7 +28,11 @@ class ProductController extends Controller
     {
         // Mostrar solo productos de la compañía del usuario
         $products = Product::where('company_id', auth()->user()->company_id)->get();
-        return view('products.index', compact('products'));
+
+        // Obtener estadísticas de uso
+        $usageStats = $this->productLimitService->getUsageStatistics();
+
+        return view('products.index', compact('products', 'usageStats'));
     }
 
     /**
@@ -32,10 +40,17 @@ class ProductController extends Controller
      */
     public function create()
     {
+        // Verificar límite de productos
+        $limitCheck = $this->productLimitService->canCreateProduct();        
+
+        if (!$limitCheck['success']) {
+            return redirect()->route('products.index')->with('error', $limitCheck['message']);
+        }
+
         $categories = Category::where('company_id', auth()->user()->company_id)->get();
         $brands = Brand::where('company_id', auth()->user()->company_id)->get();
 
-        return view('products.create', compact('categories', 'brands'));
+        return view('products.create', compact('categories', 'brands', 'limitCheck'));
     }
 
     /**
@@ -43,9 +58,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        // Verificar límite de productos
+        $limitCheck = $this->productLimitService->canCreateProduct();
+
+        if (!$limitCheck['success']) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $limitCheck['message']);
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validación: imagen, tipos permitidos, max 2MB
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2300', // Validación: imagen, tipos permitidos, max 2MB
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id', // Valida que exista en la tabla categories            
             'brand_id' => 'nullable|exists:brands,id', // Valida que exista en la tabla brands
@@ -62,7 +86,7 @@ class ProductController extends Controller
             'image' => $imagePath,
             'description' => $request->description,
             'category_id' => $request->category_id,
-            'company_id' => auth()->user()->company_id, // Asigna automáticamente
+            'company_id' => auth()->user()->company_id,
         ]);        
 
         return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
@@ -123,22 +147,21 @@ class ProductController extends Controller
             $imagePath = $request->file('image')->store("products/{$companyId}", 'public');
         }
 
+        $barcodeImage = $product->barcode_image;
+
+        if ($product->barcode && empty($product->barcode_image)) {            
+            $barcodeImage = $this->generateBarcodeImageSVG($product);                              
+        }
+        
         $product->update([
             'name' => $request->name,
             'image' => $imagePath,
             'description' => $request->description,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
+            'barcode_image' => $barcodeImage,
         ]);
-
-        if (empty($product->barcode)) {
-            //validar si quedo bien con las funciones privadas al final comparar
-            //con el modelo de product
-            $barcode = $this->generateUniqueBarcode($product->company_id);
-            $product->update(['barcode' => $barcode]);
-            
-        }
-        
+                
         return redirect()->route('products.index')->with('success', 'Producto actualizado.');
     }
 
@@ -210,38 +233,17 @@ class ProductController extends Controller
     /**
      * Generar código de barras único para la empresa
      */
-    private function generateUniqueBarcode($companyId)
+    private function generateBarcodeImageSVG($product)
     {
-        // Obtener el último producto de la empresa
-        $lastProduct = Product::where('company_id', $companyId)
-            ->orderBy('id', 'desc')
-            ->first();
+        // Generar imagen
+        $generator = new BarcodeGeneratorSVG();
+        $image = $generator->getBarcode($product->barcode, 'C128B', 3);
         
-        // Extraer número del último código (ej: COMP-00001 -> 1)
-        $nextNumber = $lastProduct ? (int)substr($lastProduct->barcode, 5) + 1 : 1;
+        // Guardar imagen
+        $filename = "products/{$product->company_id}/{$product->barcode}.svg";
+        Storage::disk('public')->put($filename, $image);
         
         // Formatear con ceros a la izquierda
-        return 'COMP-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Generar y guardar imagen del código de barras
-     */
-    private function saveBarcodeImage($barcode, $companyId)
-    {
-        $generator = new BarcodeGeneratorPNG();
-        $image = $generator->getBarcode($barcode, 'CODE128');
-        
-        // Crear carpeta de la compañía si no existe
-        $directory = "products/{$companyId}";
-        if (!Storage::disk('public')->exists($directory)) {
-            Storage::disk('public')->makeDirectory($directory);
-        }
-
-        // Guardar imagen
-        $filename = "products/{$companyId}/{$barcode}.png";
-        Storage::disk('public')->put($filename, $image);
-
         return $filename;
     }
 }

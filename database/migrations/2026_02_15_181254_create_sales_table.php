@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number')->unique();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->json('items')->nullable(); // JSON con detalles de los productos vendidos
+            $table->unsignedBigInteger('user_id')->nullable();            
             $table->string('customer_name')->nullable();
             $table->string('customer_phone')->nullable();
             $table->string('customer_id')->nullable();
