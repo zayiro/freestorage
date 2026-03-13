@@ -31,6 +31,12 @@ class Product extends Model
 
     protected $fillable = ['name', 'image', 'category_id', 'barcode', 'barcode_image', 'description', 'company_id', 'brand_id'];
     
+    // Scope para búsqueda rápida por código de barras
+    public function scopeByBarcode($query, $barcode)
+    {
+        return $query->where('barcode', $barcode)->first();
+    }
+    
     public function company()
     {
         return $this->belongsTo(Company::class);

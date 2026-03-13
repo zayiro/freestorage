@@ -79,6 +79,7 @@
                                     <a class="dropdown-item" href="{{ route('home') }}">
                                        Tienda
                                     </a>
+                                    <a class="dropdown-item" href="{{ route('products.barcode') }}">Search barcode</a>
                                     <a class="dropdown-item" href="{{ route('administration.index') }}">Administración</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

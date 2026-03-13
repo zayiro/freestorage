@@ -4,7 +4,7 @@
     <div class="container mt-5">
         <h1>Productos</h1>
         {{-- Botón para crear --}}
-        <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Crear Producto</a>
+        <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Crear Producto</a>        
         @if(!empty(($products)))
             {{-- Mensaje de éxito --}}
             @if(session('success'))

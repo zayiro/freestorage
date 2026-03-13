@@ -22,7 +22,7 @@
                                 <a href="{{ route('products.create') }}">Crear su primer producto?</a>
                             </p>
                             @endif
-                        @else
+                        @else                        
                             {{-- Formulario de búsqueda --}}
                             <form action="{{ route('home') }}" method="GET" class="mb-4">
                                 <div class="input-group">
@@ -33,12 +33,12 @@
                                         value="{{ $search ?? '' }}">
                                     <button type="submit" class="btn btn-primary shadow">
                                         <i class="fas fa-search"></i> Buscar
-                                    </button>
+                                    </button>                                    
                                     @if(isset($search) && $search)
                                         <a href="{{ route('home') }}" class="btn btn-secondary">Limpiar</a>
                                     @endif
                                 </div>
-                            </form>
+                            </form>                            
                             @foreach ($products as $product)
                                 @php
                                     $descripcion = $product->description ?? 'Descripción: N/A';

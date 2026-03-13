@@ -259,4 +259,29 @@ class ProductController extends Controller
         // Formatear con ceros a la izquierda
         return $filename;
     }
+
+    public function barcode()
+    {
+        /*$request->validate([
+            'barcode' => 'required|integer',
+        ]);
+
+        $barcode = $request->barcode;
+        
+        $product = Product::byBarcode($barcode);
+        
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Producto no encontrado'
+            ], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'product' => $product
+        ]);*/
+
+        return view('products.barcode');
+    }
 }
