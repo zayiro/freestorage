@@ -63,6 +63,8 @@ Route::resource('products', ProductController::class);
 Route::get('/products/searchbarcode', [ProductController::class, 'searchBarcode'])->name('products.searchbarcode');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/products/{product}/show', [ProductController::class, 'showProduct'])->name('products.showproduct');
+// routes/web.php
+Route::post('/products/share-whatsapp', [ProductController::class, 'shareToClient'])->name('products.sharewhatsapp');
 
 Route::resource('presentations', PresentationController::class);
 

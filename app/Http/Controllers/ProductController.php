@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Presentation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Picqer\Barcode\BarcodeGeneratorSVG;
@@ -282,5 +283,46 @@ class ProductController extends Controller
             'success' => true,
             'product' => $product
         ]);
+    }
+
+    public function whatsappShare($productId)
+    {
+        $product = Product::findOrFail($productId);
+        
+        $message = $this->buildShareMessage($product);
+        $whatsappLink = $this->generateWhatsAppLink($message);
+        
+        return redirect()->away($whatsappLink);
+    }
+    
+    private function buildShareMessage(Product $product)
+    {
+        $presentations = Presentation::where('id', $product->id)->orderBy('sales_price', 'asc')->first();
+        $salesPrice = $presentations->sales_price;
+
+        return "{$product->name}\n" .
+               "Desde: $" . number_format($salesPrice, 2) . "\n" .
+               "Producto ID: " . $product->id;
+    }
+    
+    private function generateWhatsAppLink($phone, $message)
+    {
+        $encodedMessage = urlencode($message);
+        return "https://wa.me/+{$phone}?text=" . $encodedMessage;
+    }
+
+    public function shareToClient(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'client_phone' => 'required|regex:/^57[0-9]{10}$/'
+        ]);
+        
+        $product = Product::findOrFail($request->product_id);
+        $message = $this->buildShareMessage($product);
+        $whatsappUrl = $this->generateWhatsAppLink($request->client_phone, $message);
+                
+        // REDIRECT con WhatsApp URL
+        return redirect()->away($whatsappUrl);
     }
 }

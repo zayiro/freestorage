@@ -16,7 +16,7 @@
             @else
                 <div>Sin barcode</div>
             @endif
-        </p>
+        </p>        
 
         <div class="d-flex justify-content-between align-items-center gap-2"> 
             @if($product->presentations->isNotEmpty())                                           
@@ -34,8 +34,42 @@
             @endif
             <div>
                 <a href="{{ route('home') }}" class="btn btn-primary btn-lg shadow">Tienda</a> 
-            </div>
-        </div>                                       
+            </div>            
+        </div>    
+        
+        <div class="mt-5">
+            <form action="{{ route('products.sharewhatsapp') }}" 
+                method="POST" 
+                class="whatsapp-form" 
+                id="whatsappForm"
+                target="_blank">
+                
+                @csrf
+                <h4>📱 Enviar al cliente por WhatsApp</h4>
+                <div class="input-group mb-3 w-50">
+                    <span class="input-group-text">
+                        <i class="fab fa-whatsapp"></i>
+                    </span>
+                    <input type="tel" 
+                        class="form-control whatsapp-input" 
+                        id="client_phone" 
+                        name="client_phone" 
+                        placeholder="573026433874"
+                        value="{{ old('client_phone') }}"
+                        required 
+                        pattern="57[0-9]{10}"
+                        title="Formato: 573026433874"
+                    >
+                    <button class="btn btn-success whatsapp-share-btn" id="shareBtn">
+                        <i class="fab fa-whatsapp"></i> Enviar
+                    </button>
+                </div>
+                <input type="hidden" name="product_id" value="{{ $product->id }}">
+            </form>
+            @error('client_phone')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+        </div>
     </div>
 
     {{-- Modal único para todas las presentaciones --}}
