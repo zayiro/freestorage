@@ -79,7 +79,10 @@
                                     <a class="dropdown-item" href="{{ route('home') }}">
                                        Tienda
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('scanner') }}">Search barcode</a>
+                                    <a class="dropdown-item" href="{{ route('scanner') }}">
+                                        <i class="fas fa-barcode"></i>
+                                        Ir al escáner
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('administration.index') }}">Administración</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
