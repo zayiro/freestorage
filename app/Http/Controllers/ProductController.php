@@ -259,16 +259,17 @@ class ProductController extends Controller
         // Formatear con ceros a la izquierda
         return $filename;
     }
-
-    public function barcode()
+    
+    /**
+     * Generar busqueda código de barras único para la empresa
+     */
+    public function searchByBarcode(Request $request)
     {
-        /*$request->validate([
-            'barcode' => 'required|integer',
-        ]);
-
         $barcode = $request->barcode;
         
-        $product = Product::byBarcode($barcode);
+        $product = Product::where('barcode', $barcode)
+                        ->orWhere('barcode', 'like', '%' . $barcode . '%')
+                        ->first();
         
         if (!$product) {
             return response()->json([
@@ -280,8 +281,6 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'product' => $product
-        ]);*/
-
-        return view('products.barcode');
+        ]);
     }
 }

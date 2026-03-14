@@ -45,6 +45,10 @@ Route::middleware([
         ->name('activity-logs.show');
 });
 
+Route::get('/scanner', function () {
+    return view('scanner');
+})->name('scanner');
+
 Route::resource('users', UserController::class);
 
 Route::get('/administration', [DashboardController::class, 'index'])->name('administration.index');
@@ -56,7 +60,7 @@ Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])->nam
 Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
 
 Route::resource('products', ProductController::class);
-Route::get('/products/barcode', [ProductController::class, 'barcode'])->name('products.barcode');
+Route::get('/products/searchbarcode', [ProductController::class, 'searchBarcode'])->name('products.searchbarcode');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/products/{product}/show', [ProductController::class, 'showProduct'])->name('products.showproduct');
 
