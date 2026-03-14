@@ -1,7 +1,7 @@
 @extends('layouts.app') {{-- Ajusta a tu layout --}}
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>{{ $brand->name }}</h1>
         
         <div class="card">

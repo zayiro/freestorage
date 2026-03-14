@@ -1,7 +1,7 @@
 @extends('layouts.app') {{-- Adjust to your layout file --}}
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <p>
             @if($company->image)
                 

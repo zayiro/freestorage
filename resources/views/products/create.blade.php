@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>Crear Producto</h1>
         {{-- Mostrar errores de validación --}}
         @if($errors->any())

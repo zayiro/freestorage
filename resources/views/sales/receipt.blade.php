@@ -29,7 +29,7 @@
     }
 </style>
 
-<div id="area-imprimir" class="container my-3">
+<div id="area-imprimir" class="container my-3 mt-5">
     <!-- Encabezado -->
     <div class="receipt-header">
         @if(session('success'))

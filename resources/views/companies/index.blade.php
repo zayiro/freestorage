@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container mt-5">
     <h1>Lista de Compañías</h1>
     <a href="{{ route('companies.create') }}" class="btn btn-primary mb-3">Crear Nueva Compañía</a>
     

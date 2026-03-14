@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>Crear Marca</h1>
         <form action="{{ route('brands.store') }}" method="POST">
             @csrf

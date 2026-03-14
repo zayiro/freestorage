@@ -1,7 +1,7 @@
 @extends('layouts.app') {{-- Ajusta a tu layout --}}
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>Detalles del Usuario: {{ $user->name }}</h1>
         
         <div class="card">

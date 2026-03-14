@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>{{ $category->name }}</h1>
         <p><strong>Descripción:</strong> {{ $category->description ?: 'Sin descripción' }}</p>
         <p><strong>Compañía:</strong> {{ $category->company->name }}</p>

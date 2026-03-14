@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container mt-5">
     <h1>Editar Producto</h1>
     @if($errors->any())
         <div class="alert alert-danger mt-3">

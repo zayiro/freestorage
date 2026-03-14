@@ -1,7 +1,7 @@
 @extends('layouts.app') {{-- Ajusta si tu layout es diferente --}}
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>Editar Categoría</h1>
         
         {{-- Mostrar errores de validación --}}

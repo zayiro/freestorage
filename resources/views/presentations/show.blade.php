@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>{{ $presentation->name }}</h1>
         <div class="card">
             <div class="card-body">

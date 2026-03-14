@@ -23,7 +23,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light fixed-top bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Freestorage') }}
@@ -98,12 +98,30 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4 pt-5">
             @yield('content')    
             
             <!-- Contenedor para los Toasts -->
             <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
         </main>
+
+        <footer class="container py-5">
+            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"> 
+                <p>© 2026 Zayiro, Inc. All rights reserved.</p> 
+                <ul class="list-unstyled d-flex"> 
+                    <li class="ms-3">
+                        <a class="link-body-emphasis" href="#" aria-label="Instagram">
+                            <svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg>
+                        </a>
+                    </li> 
+                    <li class="ms-3">
+                        <a class="link-body-emphasis" href="#" aria-label="Facebook">
+                            <svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#facebook"></use></svg>
+                        </a>
+                    </li> 
+                </ul> 
+            </div>
+        </footer> 
     </div>
     
     @yield('scripts')

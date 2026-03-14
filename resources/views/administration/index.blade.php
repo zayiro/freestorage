@@ -1,7 +1,7 @@
 @extends('layouts.app') {{-- Ajusta a tu layout --}}
 
 @section('content')
-    <div class="container">
+    <div class="container mt-5">
         <h1>Administración</h1>
         <div class="list-group mt-3">            
             <a class="list-group-item list-group-item-action" href="{{ route('brands.index') }}">Marcas</a>
